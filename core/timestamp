@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+# timestamp -- date and time in XML Schema Date Time format
+# Author: Jaeho Shin <netj@sparcs.org>
+# Created: 2009-03-17
+exec date +%FT%T%:z

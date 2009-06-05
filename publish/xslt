@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+# xslt -- run XSL Transform
+# Author: Jaeho Shin <netj@sparcs.org>
+# Created: 2009-03-17
+set -e
+
+xsl=$1; shift
+src=$1; shift
+out=$1; shift
+
+# TODO use saxon for supporting xslt 2.0
+exec xsltproc --output "$out" "$@" "$xsl" "$src"

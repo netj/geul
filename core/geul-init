@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+# geul-init -- initialize a Geul archive
+# Author: Jaeho Shin <netj@sparcs.org>
+# Created: 2009-06-05
+set -e
+
+# check sanity
+if GEUL_DIR=${GEUL_DIR:-`geuldir 2>/dev/null`}; then
+    error "$GEUL_DIR: Geul repository exists"
+    error "A Geul repository cannot be initialized inside another one"
+    exit 2
+fi
+
+# determine repository location
+GEUL_DIR=$1
+[ -n "$GEUL_DIR" ] || GEUL_DIR=.geul
+
+# create a repository
+mkdir -p "$GEUL_DIR"
+cd "$GEUL_DIR"
+echo 1 >format
+touch base-url
+mkdir -p archive
+mkdir -p chrome

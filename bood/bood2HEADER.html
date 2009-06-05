@@ -1,0 +1,10 @@
+#!/bin/sh
+# Bood to Simple HTML (usual HEADER.html style) converter
+# Author: Jaeho Shin <netj@sparcs.org>
+# Created: 2006-06-05
+
+bood "$@" | xmlstarlet sel -I               \
+    -N html=http://www.w3.org/1999/xhtml    \
+    -N bood=http://netj.org/2004/bood       \
+    -t -e h1 -v '//html:title[1]'           \
+    -t -c '//html:body[1]/*'

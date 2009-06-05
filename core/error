@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+# error -- show error message
+# Author: Jaeho Shin <netj@sparcs.org>
+# Created: 2009-06-03
+echo "$@" >&2

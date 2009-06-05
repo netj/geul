@@ -1,0 +1,77 @@
+Title: Functional Requirements for Geul
+Author: Jaeho Shin <netj@sparcs.org>
+Created: 2009-06-03
+
+= New Article =
+-->8--
+$ geul edit 2009/06/a-command-line-blog
+# compose an article in my $EDITOR
+# 1. touch 2009/06/a-command-line-blog.txt
+# 2. open it in my $EDITOR
+--8<--
+
+
+= Revoke Article =
+-->8--
+$ geul rm 2009/06/a-command-line-blog
+# remove an article from archive, e.g.
+#  .geul/2009/06/a-command-line-blog.txt,v
+--8<--
+
+
+= List Articles =
+-->8--
+$ geul ls
+2009/06/a-command-line-blog
+# ... lists all articles
+
+$ geul ls 2004/*/rxvt
+# ... lists articles with given pattern
+--8<--
+
+
+= Publish Articles =
+-->8--
+$ geul publish
+# publishes all articles, e.g.
+#  2009/06/a-command-line-blog.txt from .geul/archive/2009/06/a-command-line-blog.txt,v
+#  2009/06/a-command-line-blog.xml from 2009/06/a-command-line-blog.txt
+#  2009/06/a-command-line-blog.html from 2009/06/a-command-line-blog.xml
+
+$ geul publish 2008 2009
+# publishes selected articles
+--8<--
+
+
+= Clean Generated Resources =
+-->8--
+geul clean
+# cleans all generated resources, e.g.
+#  2009/06/a-command-line-blog.txt
+#  2009/06/a-command-line-blog.xml
+#  2009/06/a-command-line-blog.html
+--8<--
+
+
+= Record Changes =
+-->8--
+$ geul record 2009/06/a-command-line-blog
+# records article in archive, e.g.
+#  ci .geul/archive/2009/06/a-command-line-blog.txt,v
+--8<--
+
+
+= Review Change Log =
+-->8--
+$ geul log 2009/06/a-command-line-blog
+# shows recorded changes of given article
+--8<--
+
+
+= Preview Article =
+-->8--
+$ geul preview 2009/06/a-command-line-blog
+# starts a geul web server (if not running)
+# and opens a browser (if available)
+--8<--
+

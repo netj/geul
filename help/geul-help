@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+# geul-help -- show help
+# Usage: geul help [TOPIC]
+# 
+# TOPIC is either name of a COMMAND or documentation.
+# 
+# Example:
+#   geul help
+#   geul help intro
+#   geul help help
+# 
+#
+# Author: Jaeho Shin <netj@sparcs.org>
+# Created: 2009-04-27
+set -e
+
+show-embedded-help() {
+    local cmd=$1
+    local name=${cmd##*/}
+    sed -n <"$cmd" '/^# '"$name"' --/,/^#$/ s/^# //p'
+}
+
+if [ $# -eq 0 ]; then
+    show-embedded-help "$GEULBASE/geul"
+else
+    topic=$1; shift
+    helproot="$GEULBASE/help"
+    doc="$helproot/$topic.txt"
+    if [ -f "$doc" ]; then
+        # show if help topic is available
+        cat "$doc"
+    else
+        # otherwise, try extracting built-in help of command script
+        if cmd=`type -p geul-$topic 2>/dev/null`; then
+            case "`file "$cmd"`" in
+                *text*)
+                show-embedded-help "$cmd"
+                exit $?
+                ;;
+            esac
+        fi
+        error "help: $topic: not available"
+        exit 2
+    fi
+fi

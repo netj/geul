@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+# geul-publish -- publish articles
+# Author: Jaeho Shin <netj@sparcs.org>
+# Created: 2009-06-04
+set -e
+
+GEUL_DIR=${GEUL_DIR:-`geuldir`}
+GEUL_BASEURL=`cat "$GEUL_DIR/base-url" 2>/dev/null`
+[ -n "$GEUL_BASEURL" ] || error ".geul/base-url: base URL is empty"
+export GEUL_DIR GEUL_BASEURL
+
+set -- \
+    `cd "$GEULBASE/publish" && find chrome -type f` \
+    `cd "$GEUL_DIR" && find chrome -type f` \
+    `geul-ls "$@" | sed 's/$/.html/'`
+
+cd "$GEUL_DIR/.."
+"$GEULBASE"/publish/publish.mk -rs "$@"

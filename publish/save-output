@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+# save-output -- save output of given command into given file
+# Author: Jaeho Shin <netj@sparcs.org>
+# Created: 2009-06-05
+set -e
+
+f=$1; shift
+tmp=`mktemp "$f".XXXXXX`
+trap 'c=$?; rm -f "$tmp"; exit $c' EXIT
+chmod a+r "$tmp"
+
+"$@" >"$tmp"
+ln -f "$tmp" "$f"

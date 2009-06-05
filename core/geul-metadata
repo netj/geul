@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+# geul-metadata -- retreive metadata of an article in XML form
+# Author: Jaeho Shin <netj@sparcs.org>
+# Created: 2009-03-15
+set -e
+
+Article=$1; shift
+
+echo "<metadata"
+echo "id='$Article'"
+#TODO:echo "created='`geul-log "$Article" | tail -1`'"
+echo "generated='`timestamp`'"
+echo ">"
+geul-log.xml "$Article" "$@"
+echo "</metadata>"

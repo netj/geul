@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+# geul-bood -- compile bood text into XHTML
+# Author: Jaeho Shin <netj@sparcs.org>
+# Created: 2009-06-05
+PERLLIB="$GEULBASE/bood/perllib" exec bood "$@"

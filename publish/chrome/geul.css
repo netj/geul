@@ -1,0 +1,306 @@
+/*
+ * Bood default stylesheet
+ * Author:  Jaeho Shin <netj@sparcs.kaist.ac.kr>
+ * Created: 2004-07-27
+ */
+
+/* some styles for tags */
+html {
+    color: #222;
+    background-color: #ffe;
+    font-size: 0.9em;
+}
+
+body {
+    font-family: Century, Palatino Linotype, Bitstream Charter, 은 바탕, UnBatang, 바탕, Batang, serif;
+}
+.tools {
+    font-family: Bitstream Vera Sans, Tahoma, 맑은 고딕, Malgun Gothic, 은 돋움, UnDotum, 돋움, Dotum, sans-serif;
+}
+
+textarea, input {
+    font-size: 0.9em;
+}
+
+pre, tt, textarea, input {
+    font-family: Courier New, Andale Mono, Lucida Console, 은 바탕, UnBatang, 바탕체, Batangche, monospace;
+    overflow: auto;
+}
+
+address {
+    font-style: normal;
+}
+
+
+a:link {
+    text-decoration: none;
+}
+a:link, a:visited {
+    color: #f42;
+}
+a:visited, a:link:hover, a:visited:hover, a:active {
+    text-decoration: underline;
+}
+a:link:hover, a:visited:hover, a:active {
+    color: #22f;
+}
+
+a:link img, a:visited img {
+    border: none;
+}
+
+
+hr {
+    border-style: none;
+    border-top-style: solid;
+    border-color: #ccc;
+    margin: 0px;
+}
+
+form {
+    margin: 0px;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: Bitstream Vera Sans, Tahoma, 맑은 고딕, Malgun Gothic, 은 돋움, UnDotum, 돋움, Dotum, sans-serif;
+}
+
+#body h2, #body h3, #body h4, #body h5, #body h6 {
+    clear: both;
+}
+#body h2 {
+    border-bottom: 1px solid #ddd;
+}
+
+#body p {
+    margin: 0em;
+    margin-top: 0.75em;
+    margin-bottom: 0.75em;
+    line-height: 1.3em;
+}
+#body pre {
+    padding: 0.5em;
+    white-space: pre-wrap;
+}
+html>body #body pre {
+    white-space: -moz-pre-wrap;
+}
+#body pre.verbatim {
+    border: 2px dotted #999;
+    background-color: #ccc;
+    white-space: pre;
+}
+
+#body table {
+    margin: 1em;
+}
+#body table td, #body table th {
+    margin: 0.5em;
+}
+#body table tbody {
+    background-color: #ccc;
+}
+#body table thead {
+    background-color: #444;
+    border-color: #444;
+    color: #ccc;
+}
+#body table thead th {
+    border-color: #444;
+}
+#body img {
+    max-width: 100%;
+}
+
+.layout {
+    width: 100%;
+}
+
+.layout ul {
+    list-style: none;
+    margin: 0px;
+    padding: 0px;
+}
+
+.layout li {
+    display: inline;
+    padding-left: 0.4em;
+    padding-right: 0.4em;
+    border-left-width: 0.1em;
+    border-left-style: solid;
+}
+.layout img {
+    vertical-align: middle;
+}
+
+.layout ul > li:first-child {
+    border-left-style: none;
+}
+
+.warning {
+    background-color: #f42;
+    color: #ffe;
+    text-align: center;
+    padding: 0.5em;
+}
+
+#actions, #tools, #copyright {
+    font-size: 0.8em;
+}
+@media print {
+    #actions, #tools {
+        display: none;
+    }
+}
+
+#foot {
+    font-size: 0.9em;
+}
+
+#updating {
+    font-size: 0.9em;
+}
+
+#head, #head *, #foot, #foot * {
+    color: #999;
+}
+
+#created {
+    color: #333;
+}
+#modified {
+    font-size: 0.8em;
+}
+
+#title {
+    margin: 0px;
+    color: #114;
+}
+
+#body {
+    padding:1em;
+}
+
+#write, #history, #calendar {
+    width: 100%;
+    position: relative;
+    left: -1em;
+}
+
+#history tr.is-draft td, #history tr.is-draft a {
+    color: #888 !important;
+    text-decoration: line-through;
+}
+
+#calendar thead th {
+    border-width: 1px;
+    border-style: solid;
+}
+#calendar td {
+    background-color: #ffe;
+    vertical-align: top;
+    width: 14.3%;
+    height: 7em;
+    font-size: 0.8em;
+}
+#calendar td.date {
+    border-width: 1px;
+    border-style: dotted;
+}
+#calendar td.date:hover {
+    background-color: #ffd;
+    border-style: solid;
+}
+#calendar .date-number {
+    font-size: 0.8em;
+    margin-right: 0.3em;
+    float: left;
+}
+
+#write {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#comments h2 {
+    margin-top: 3em;
+}
+#comments tbody, #write tbody {
+    background-color: #ffe !important;
+}
+@media print {
+    button#commenttoggler {
+        display: none;
+    }
+    form#comment {
+        display: none;
+    }
+}
+
+#search {
+    display: none;
+}
+#search * {
+    color: black;
+}
+
+.rss-item {
+    margin: 1.5em;
+}
+.rss-head {
+    display: table;
+    width: 100%;
+}
+.rss-title {
+    display: table-cell;
+}
+.rss-timestamp {
+    display: table-cell;
+    text-align: right;
+    font-size: 0.8em;
+}
+.rss-time {
+    font-size: 0.9em;
+}
+.rss-description {
+}
+
+.xbel-folder, .xbel-folder-opened {
+    border: 1px dotted;
+    padding: 0.2em;
+    margin: 0.2em;
+    overflow: hidden;
+    height: 1.5em;
+}
+html>body .xbel-folder, .xbel-folder-opened {
+    height: 1.2em;
+}
+.xbel-folder:hover, .xbel-folder-opened {
+    border-style: solid;
+}
+.xbel-folder-opened {
+    height: auto;
+}
+.xbel > .xbel-folder {
+    border-style: solid;
+    height: auto;
+}
+.xbel-folder-header {
+    display: table-row;
+}
+.xbel-folder-body {
+    margin-top: 0.5em;
+}
+.xbel-title {
+    display: table-cell;
+    font-weight: bold;
+}
+.xbel-desc {
+    display: table-cell;
+    font-size: 0.8em;
+    padding-left: 1em;
+}
+.xbel-separator {
+    border-top: 1px solid;
+    height: 0px;
+}

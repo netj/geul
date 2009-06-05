@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+# geul -- A Command-Line Blogging/Web Publishing Tool
+# Usage: geul COMMAND [ARG...]
+# 
+# COMMAND:
+#   init        Initialize a Geul repository.
+#   help        Show help.
+# 
+#   edit        Edit existing article or create a new one.
+#   publish     Publish articles.
+#   record      Record changes of an article.
+#   log         Review change history of an article.
+# 
+#   rm          Delete an article.
+#   clean       Remove published articles.
+# 
+#   text        Retrieve an article in plain text form.
+#   xml         Retrieve an article in XML form.
+#   xmllog      Retrieve change history in XML form.
+# 
+# Try `geul help COMMAND' for more detailed usage of each COMMAND.
+# For an overall introduction to using Geul, try `geul help intro'.
+#
+# Author: Jaeho Shin <netj@sparcs.org>
+# Created: 2009-03-17
+set -e
+
+# boot up and discover environment
+GEUL=`readlink -f "$0"`
+GEULBASE=`dirname "$GEUL"`
+export GEULBASE
+
+for m in "$GEULBASE"/*/.module
+do PATH="${m%/.module}:$PATH"
+done
+
+Subcmd=$1; shift || true
+cmd=geul-$Subcmd
+if type "$cmd" &>/dev/null; then
+    exec "$cmd" "$@"
+else
+    [ -z "$Subcmd" ] || error "$Subcmd: unknown command"
+    message "Try \`geul help' for usage."
+fi

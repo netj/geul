@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+# geul-ls -- retreive list of articles in archive
+# Author: Jaeho Shin <netj@sparcs.org>
+# Created: 2009-03-15
+set -e
+
+GEUL_DIR=${GEUL_DIR:-`geuldir`}
+GEUL_PATH=`geulpath`
+export GEUL_DIR
+
+if [ $# -gt 0 ]; then
+    qs=()
+    for arg
+    do qs+=(${qs:+-o} -ipath "$arg*,v")
+    done
+else
+    qs=(-name "*,v")
+fi
+
+cd "$GEUL_DIR/archive"
+find "${GEUL_PATH:+$GEUL_PATH/}"* -type f \( "${qs[@]}" \) |
+sed -E 's/,v$//; s/\.(txt|xml|html)$//'

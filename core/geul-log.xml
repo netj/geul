@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+# geul-revision -- retreive revision info of an article in XML form
+# Author: Jaeho Shin <netj@sparcs.org>
+# Created: 2009-03-15
+set -e
+
+GEUL_DIR=${GEUL_DIR:-`geuldir`}
+export GEUL_DIR
+
+Article=$1; shift
+
+rcsv="$GEUL_DIR/archive/$Article.txt,v"
+
+# retreive info from RCS log
+rlog "${@/#/-r1.}" "$rcsv" |
+awk '
+    /^revision 1./ { r=1 }
+    /^-{28}$/ { e=1 }
+    /^={77}$/ { e=1 }
+    r { print }
+    e { e=0; r=0 }
+' |
+awk '
+    /^revision / { gsub(/revision 1\./, "number: ") }
+    /^date: / { gsub(/;.*/, "") }
+    /^by / { gsub(/^by /, "author: ") }
+    /^from / { gsub(/^from /, "location: ") }
+    { print }
+' |
+perl -Mstrict -e '
+    until (eof()) {
+        my %attrs;
+        my $message = "";
+        while (my $line = <>) {
+            chomp $line;
+            if ($line =~ /^([^:]+): (.*)$/) {
+                $attrs{$1} = $2;
+            } elsif ($line =~ /^(={77}|-{28}$)$/) {
+                last;
+            } else {
+                $message .= $line
+            }
+        }
+        $attrs{date} =~ s#/#-#g;
+        $attrs{date} =~ s# #T#;
+        print "<revision";
+        print " $_=\"$attrs{$_}\"" foreach keys %attrs;
+        print ">$message</revision>\n";
+    }
+'

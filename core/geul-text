@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+# geul-text -- retreive an article in text form
+# Author: Jaeho Shin <netj@sparcs.org>
+# Created: 2009-03-10
+set -e
+
+GEUL_DIR=${GEUL_DIR:-`geuldir`}
+export GEUL_DIR
+
+Article=$1; shift
+Version=$1; shift || true
+
+tmp=`mktemp -d /tmp/geul-text.XXXXXX`
+trap "rm -rf $tmp" EXIT
+
+rcsv="$GEUL_DIR/archive/$Article.txt,v"
+ropt=${Version:+-r1.$Version}
+
+cd $tmp
+co -q $ropt "$rcsv"
+
+cat "`basename "$rcsv" ,v`"

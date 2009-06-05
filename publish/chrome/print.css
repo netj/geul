@@ -1,0 +1,151 @@
+/*
+ * Bood printing stylesheet
+ * Author:  Jaeho Shin <netj@sparcs.kaist.ac.kr>
+ * Created: 2004-08-25
+ */
+
+@import url(bood.css);
+/* some styles for tags */
+body {
+    color: #222;
+    background-color: #ffe;
+    font-size: 1em;
+    font-family: "Georgia", "Batang", serif;
+}
+
+textarea, input {
+    font-size: 0.9em;
+}
+
+pre, tt, textarea, input {
+    font-family: "Lucida Console", "BatangChe", monospace;
+}
+
+address {
+    font-style: normal;
+    font-size: 0.9em;
+}
+
+
+a:link {
+    text-decoration: none;
+}
+a:link, a:visited {
+    color: #f42;
+}
+a:visited, a:link:hover, a:visited:hover, a:active {
+    text-decoration: underline;
+}
+a:link:hover, a:visited:hover, a:active {
+    color: #22f;
+}
+
+
+hr {
+    border-style: none;
+    border-top-style: solid;
+    border-color: #ccc;
+    margin: 0px;
+}
+
+form {
+    margin: 0px;
+}
+
+#body pre {
+    padding: 0.5em;
+}
+
+#body pre.verbatim {
+    background-color: #ccc;
+}
+
+#body table {
+    margin: 1em;
+}
+#body table td, #body table th {
+    margin: 0.5em;
+}
+#body table tbody {
+    background-color: #ccc;
+}
+#body table thead {
+    background-color: #444;
+    color: #ccc;
+}
+
+
+.layout {
+    width: 100%;
+}
+
+.layout ul {
+    list-style: none;
+    margin: 0px;
+}
+
+.layout li {
+    display: inline;
+    padding-left: 0.4em;
+    padding-right: 0.4em;
+    border-left-width: 0.1em;
+    border-left-style: solid;
+}
+
+.layout ul > li:first-child {
+    border-left-style: none;
+}
+
+#site-head {
+    margin: 1em;
+    text-align: center;
+}
+
+#actions {
+    text-align: right;
+    font-size: 0.9em;
+}
+
+#page-title {
+    margin: 0px;
+}
+
+#foot {
+    font-size: 0.8em;
+}
+
+#body {
+    padding: 0.5em;
+}
+
+#write, #history, #calendar {
+    width: 100%;
+    position: relative;
+    left: -1em;
+}
+
+#calendar td {
+    background-color: #fff;
+    vertical-align: top;
+    width: 14.3%;
+    height: 7em;
+    font-size: 0.8em;
+}
+#calendar td.date {
+    border-width: 1px;
+    border-style: solid;
+}
+
+#calendar .date-number {
+    font-size: 0.8em;
+}
+
+#write {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#write tbody {
+    background-color: #fff;
+}
+

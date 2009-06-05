@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# geul-edit -- edit an article
+#
+# Author: Jaeho Shin <netj@sparcs.org>
+# Created: 2009-06-05
+set -e
+
+Article=$1; shift
+
+mkdir -p "`dirname "$Article"`"
+"${EDITOR:-vi}" "$Article.txt"

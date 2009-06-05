@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+# geuldir -- find GEUL_DIR
+# Author: Jaeho Shin <netj@sparcs.org>
+# Created: 2009-06-04
+set -e
+
+is-geul-root() { [ -d .geul/archive ]; }
+
+is-supported-format() {
+    [ v"`cat .geul/format 2>/dev/null`" == v1 ]
+}
+
+until is-geul-root || [ "$PWD" = / ]
+do cd ..
+done
+
+if is-geul-root; then
+    if is-supported-format; then
+        echo $PWD/.geul
+    else
+        error "$PWD/.geul: unsupported repository version"
+        false
+    fi
+else
+    error "not in a Geul repository"
+    false
+fi
