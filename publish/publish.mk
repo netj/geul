@@ -2,6 +2,7 @@
 # publish.mk -- Makefile for publishing rules of Geul
 # Author: Jaeho Shin <netj@sparcs.org>
 # Created: 2009-06-03
+SHELL:=$(shell which bash)
 
 GEUL_DIR ?= .geul
 
@@ -50,3 +51,15 @@ articlexsl:=$(GEULBASE)/publish/article.xsl
 	mkdir -p "$(*D)"
 	save-output "$@" geul-text "$*"
 
+.PHONY: .htaccess
+.htaccess:
+	echo "$@"
+	f="$(GEULBASE)/publish/htaccess"; \
+	if grep "# Begin of Geul Configuration" $@ &>/dev/null; \
+	then screen -Dm vim $@ \
+	    +"/# Begin of Geul Configuration" \
+	    +"norm V/# End of Geul Configurations" \
+	    +"r $$f" +"norm -dd" \
+	    +wq; \
+	else cat "$$f" >>$@; \
+	fi

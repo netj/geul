@@ -12,6 +12,7 @@ export GEUL_DIR GEUL_BASEURL
 set -- \
     `cd "$GEULBASE/publish" && find chrome -type f` \
     `cd "$GEUL_DIR" && find chrome -type f` \
+    .htaccess \
     `geul-ls "$@" | sed 's/$/.html/'`
 
 cd "$GEUL_DIR/.."
