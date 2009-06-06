@@ -12,6 +12,7 @@ ifeq ($(shell test -e "$(chromexsl)" || echo false),)
 %.html: %.xhtml $(chromexsl)
 	echo "$@"
 	xslt "$(chromexsl)" $< $@
+	touch -r "$<" "$@"
 else
 %.html: %.xhtml
 	echo "$@"
@@ -39,17 +40,20 @@ articlexsl:=$(GEULBASE)/publish/article.xsl
 	xslt "$(articlexsl)" "$<" "$@" \
 	    --param ArticleId "'$*'" \
 	    $${GEUL_BASEURL:+--param BaseURL "'$$GEUL_BASEURL'"}
+	touch -r "$<" "$@"
 
 %.xml: %.txt
 	echo "$@"
 	# FIXME make use of $<
 	save-output "$@" geul-xml "$*"
+	touch -r "$<" "$@"
 
 .SECONDEXPANSION:
 %.txt: $(GEUL_DIR)/archive/$$(@),v
 	echo "$@"
 	mkdir -p "$(*D)"
 	save-output "$@" geul-text "$*"
+	touch -r "$<" "$@"
 
 .PHONY: .htaccess
 .htaccess:

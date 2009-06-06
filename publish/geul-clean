@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+# geul-clean -- remove generated resources while publishing articles
+# Author: Jaeho Shin <netj@sparcs.org>
+# Created: 2009-06-06
+set -e
+
+GEUL_DIR=${GEUL_DIR:-`geuldir`}
+export GEUL_DIR
+
+clean() {
+    local a=$1; shift
+    (
+    cd "$GEUL_DIR/.."
+    set -- "$a".{html,xhtml,xml,txt} "$GEUL_DIR/archive/$a.txt,v"
+    local derivative=$1; shift
+    while origin=$1; shift; do
+        # don't remove newer derivatives
+        [ "$derivative" -nt "$origin" ] && return
+        rm -vf "$derivative"
+        derivative=$origin
+    done
+    )
+}
+
+# remove generated resources of articles
+for a in `geul-ls "$@"`
+do clean "$a"
+done
+
+# remove empty containing directories
+for d in `geul-ls "$@" | sed 's#/[^/]*$##' | sort | uniq`
+do rmdir -p "$GEUL_DIR/../$d" 2>/dev/null || true
+done
