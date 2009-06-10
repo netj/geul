@@ -2,4 +2,12 @@
 # geul-bood -- compile bood text into XHTML
 # Author: Jaeho Shin <netj@sparcs.org>
 # Created: 2009-06-05
-PERLLIB="$GEULBASE/bood/perllib" exec bood "$@"
+set -e
+
+export PERLLIB="$GEULBASE/bood:$GEULBASE/bood/perllib"
+
+exec perl -Mutf8 -MBood -e '
+$x=Bood::body2xml(\*STDIN);
+utf8::encode($x);
+print $x;
+'

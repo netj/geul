@@ -1,15 +1,17 @@
 #!/usr/bin/env bash
-# geul-revision -- retreive revision info of an article in XML form
+# geul-log -- retreive revision history of an article
 # Author: Jaeho Shin <netj@sparcs.org>
 # Created: 2009-03-15
 set -e
 
 GEUL_DIR=${GEUL_DIR:-`geuldir`}
 export GEUL_DIR
+GEUL_PATH=`geulpath`
 
 Article=$1; shift
+Id=`geul-path-parse "$Article"`
 
-rcsv="$GEUL_DIR/archive/$Article.txt,v"
+rcsv="$GEUL_DIR/archive/$Id.txt,v"
 
 # retreive info from RCS log
 rlog "${@/#/-r1.}" "$rcsv" |
@@ -21,10 +23,10 @@ awk '
     e { e=0; r=0 }
 ' |
 awk '
-    /^revision / { gsub(/revision 1\./, "number: ") }
-    /^date: / { gsub(/;.*/, "") }
-    /^by / { gsub(/^by /, "author: ") }
-    /^from / { gsub(/^from /, "location: ") }
+    /^revision / { gsub(/revision 1\./, "Number: ") }
+    /^date: / { gsub(/;.*/, ""); gsub(/^date:/, "Date:") }
+    /^by / { gsub(/^by /, "Author: ") }
+    /^from / { gsub(/^from /, "Location: ") }
     { print }
 ' |
 perl -Mstrict -e '
@@ -41,10 +43,11 @@ perl -Mstrict -e '
                 $message .= $line
             }
         }
-        $attrs{date} =~ s#/#-#g;
-        $attrs{date} =~ s# #T#;
-        print "<revision";
-        print " $_=\"$attrs{$_}\"" foreach keys %attrs;
-        print ">$message</revision>\n";
+        $attrs{Date} =~ s#/#-#g;
+        $attrs{Date} =~ s# #T#;
+        print "Revision $attrs{Number}\n";
+        delete $attrs{Number};
+        print "$_: $attrs{$_}\n" foreach keys %attrs;
+        print "\n$message\n\n";
     }
 '

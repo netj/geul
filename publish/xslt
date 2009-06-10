@@ -9,4 +9,5 @@ src=$1; shift
 out=$1; shift
 
 # TODO use saxon for supporting xslt 2.0
-exec xsltproc --output "$out" "$@" "$xsl" "$src"
+xsltproc "$@" "$xsl" "$src" |
+xmllint --format --encode utf-8 --output "$out" -

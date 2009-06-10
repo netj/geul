@@ -11,7 +11,7 @@ clean() {
     local a=$1; shift
     (
     cd "$GEUL_DIR/.."
-    set -- "$a".{html,xhtml,xml,txt} "$GEUL_DIR/archive/$a.txt,v"
+    set -- "$a".{html,xhtml,txt} "$GEUL_DIR/archive/$a.txt,v"
     local derivative=$1; shift
     while origin=$1; shift; do
         # don't remove newer derivatives

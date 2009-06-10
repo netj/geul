@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+# geul-text -- show text form of an article
+# Author: Jaeho Shin <netj@sparcs.org>
+# Created: 2009-06-10
+set -e
+
+GEUL_DIR=${GEUL_DIR:-`geuldir`}
+export GEUL_DIR
+GEUL_PATH=${GEUL_PATH:-`geulpath`}
+export GEUL_PATH
+
+Article=$1; shift
+Id=`geul-path-parse "$Article"`
+
+requires "$Id.txt"
+cat "$Id.txt"

@@ -5,6 +5,7 @@
 set -e
 
 f=$1; shift
+mkdir -p "`dirname "$f"`"
 tmp=`mktemp "$f".XXXXXX`
 trap 'c=$?; rm -f "$tmp"; exit $c' EXIT
 chmod a+r "$tmp"

@@ -10,10 +10,6 @@ use utf8;
 use XML::Generator;
 use POSIX;
 
-use Exporter;
-our @ISA = qw(Exporter);
-our @EXPORT = qw(time2iso);
-
 our $TextWidth = 74; # We will assume the author did not intentionally break
                      # the lines longer than this width.
 
@@ -22,65 +18,12 @@ our $NameSpace_XInclude = ["xi" => "http://www.w3.org/2001/XInclude"];
 our $X = new XML::Generator(namespace => $NameSpace_XHTML);
 
 
-sub fh2xml {
-    my $fh = shift;
-    $X->html(
-        head2xml(parse_head($fh)),
-        body2xml($fh)
-    )
-}
-
-our %CanonicalName;
-sub alias { my $n = shift; $CanonicalName{$_} = $n foreach @_; }
-alias(qw(title 제목));
-alias(qw(author 누가 글쓴이 지은이));
-alias(qw(created 만듬 언제 날짜));
-alias(qw(modified 고침));
-alias(qw(status 상태));
-sub normalize_head {
-    my $hd = shift;
-    my $hd2 = {};
-    for my $n (keys %$hd) {
-        my $n2 = lc $n;
-        $n2 = $CanonicalName{$n} if exists $CanonicalName{$n};
-        $hd2->{$n2} = $hd->{$n};
-    }
-    $hd2
-}
-
-sub parse_head {
-    my $fh = shift;
-    my %hd;
-    while (my $line = <$fh>) {
-        utf8::decode($line);
-        last if $line =~ /^\s*$/;
-        chomp $line;
-        if ($line =~ /^([^:]+)\s*:\s*(.*)$/) {
-            $hd{$1} = $2;
-        }
-    }
-    \%hd
-}
-
-sub head2xml {
-    my $hd = normalize_head(shift);
-    my $timestamp = shift || time;
-    my @head;
-    for my $n (qw(author created modified status revision)) {
-        next unless defined $hd->{$n};
-        push @head, $X->meta({name=>escapeXML($n),
-                content=>escapeXML($hd->{$n})});
-    }
-    push @head, $X->title(escapeXML($hd->{title}));
-#FIXME    push @head, $X->timestamp(time2iso($timestamp));
-    $X->head(@head)
-}
-
 sub body2xml {
     my $fh = shift;
     my $body = { type => "body", indent => -1, content => [] };
     my @blocks = ($body);
     while (my $line = <$fh>) {
+        utf8::decode($line);
         my $block = { type => undef, indent => undef, content => [] };
         my $lineoverflow = (length $line) gt $TextWidth;
         # TODO How about extending lines with \ or nesting blocks with
@@ -598,4 +541,5 @@ sub time2iso {
     $t
 }
 
-print Bood::fh2xml(\*STDIN);
+#print Bood::fh2xml(\*STDIN);
+1;

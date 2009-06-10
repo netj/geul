@@ -5,18 +5,19 @@
 set -e
 
 GEUL_DIR=${GEUL_DIR:-`geuldir`}
-GEUL_PATH=`geulpath`
 export GEUL_DIR
+
+Prefix=`geul-path-parse`
 
 if [ $# -gt 0 ]; then
     qs=()
     for arg
-    do qs+=(${qs:+-o} -ipath "$arg*,v")
+    do qs+=(${qs:+-o} -ipath "$Prefix$arg.*,v")
     done
 else
     qs=(-name "*,v")
 fi
 
 cd "$GEUL_DIR/archive"
-find "${GEUL_PATH:+$GEUL_PATH/}"* -type f \( "${qs[@]}" \) |
-sed -E 's/,v$//; s/\.(txt|xml|html)$//'
+find "$Prefix"* -type f \( "${qs[@]}" \) |
+sed -E 's/,v$//; s/\.(txt|xhtml|html)$//'

@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+# requires -- generate published resources
+# Author: Jaeho Shin <netj@sparcs.org>
+# Created: 2009-06-10
+set -e
+
+GEUL_DIR=${GEUL_DIR:-`geuldir`}
+cd "$GEUL_DIR/.."
+"$GEULBASE"/publish/publish.mk -rs "$@"
