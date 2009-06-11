@@ -12,6 +12,7 @@ Article=$1; shift
 Id=`geul-path-parse "$Article"`
 
 rcsv="$GEUL_DIR/archive/$Id.txt,v"
+tz=`date +%:z`
 
 # retreive info from RCS log
 rlog "${@/#/-r1.}" "$rcsv" |
@@ -45,6 +46,7 @@ perl -Mstrict -e '
         }
         $attrs{Date} =~ s#/#-#g;
         $attrs{Date} =~ s# #T#;
+        $attrs{Date} .= "'$tz'" ;# if $attrs{Date} =~ /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}$/;
         print "Revision $attrs{Number}\n";
         delete $attrs{Number};
         print "$_: $attrs{$_}\n" foreach keys %attrs;
