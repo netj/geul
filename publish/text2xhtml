@@ -9,5 +9,7 @@ TextBody=$1; shift
 
 echo '<html xmlns="http://www.w3.org/1999/xhtml">'
 cat "$Head"
-cat "$TextBody" | geul-bood body
+echo '<body>'
+cat "$TextBody" | geul-bood
+echo '</body>'
 echo '</html>'

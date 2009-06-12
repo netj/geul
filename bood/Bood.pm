@@ -182,7 +182,8 @@ sub body2xml {
     }
     trimspaces($body);
     parse_alignments($body);
-    intermediate2xml($body)
+    #intermediate2xml($body)
+    join "", map {intermediate2xml($_)} @{$body->{content}}
 }
 
 sub parse_alignments {
