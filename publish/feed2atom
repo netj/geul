@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+# feed2atom -- generate an ATOM feed
+# Author: Jaeho Shin <netj@sparcs.org>
+# Created: 2009-06-12
+set -e
+
+GEUL_DIR=${GEUL_DIR:-`geuldir`}
+export GEUL_DIR
+
+Article=$1; shift
+Feed=$1; shift
+Meta=$1; shift
+
+while read n v; do
+    case "$n" in
+        Feed-Method:) feedmethod=$v ;;
+        Feed-Target:) feedtarget=$v ;;
+        Feed-Size:)   feedsize=$v ;;
+        "") break ;;
+    esac
+done <"$Feed"
+
+# default configs
+if [ -z "$feedmethod" ]; then
+    feedmethod=links-both
+    feedtarget=$Article
+    feedsize=
+fi
+
+
+case "$feedmethod" in
+    links-*) geul-links ${feedmethod#links-} $feedtarget ;;
+    list)    geul-ls -t $feedtarget ;;
+esac |
+if [ -n "$feedsize" ]
+then head -n $feedsize
+else cat
+fi |
+ls2atom "$Meta"
+

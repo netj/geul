@@ -11,6 +11,7 @@ clean() {
     local a=$1; shift
     (
     cd "$GEUL_DIR/.."
+    rm -vf .geul."$a".* "$a".atom
     set -- "$a".{html,xhtml,txt} "$GEUL_DIR/archive/$a.txt,v"
     local derivative=$1; shift
     while origin=$1; shift; do

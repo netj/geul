@@ -8,11 +8,24 @@ GEUL_DIR=${GEUL_DIR:-`geuldir`}
 export GEUL_DIR
 
 Prefix=`geul-path-parse`
+ListOptions=()
+while getopts "tr" o; do
+    case $o in
+        t) ListOptions+=(-t) ;;
+        r) ListOptions+=(-r) ;;
+    esac
+done
+shift $(($OPTIND - 1))
 
 if [ $# -gt 0 ]; then
     qs=()
-    for arg
-    do qs+=(${qs:+-o} -ipath "$Prefix$arg.*,v")
+    for arg; do
+        if [ -d "$GEUL_DIR/archive/$arg" ]; then
+            p="$Prefix$arg/*,v"
+        else
+            p="$Prefix$arg.*,v"
+        fi
+        qs+=(${qs:+-o} -ipath "$p")
     done
 else
     qs=(-name "*,v")
@@ -20,4 +33,5 @@ fi
 
 cd "$GEUL_DIR/archive"
 find "$Prefix"* -type f \( "${qs[@]}" \) |
+xargs ls "${ListOptions[@]}" |
 sed -E 's/,v$//; s/\.(txt|xhtml|html)$//'

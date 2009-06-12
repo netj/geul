@@ -13,6 +13,6 @@ set -- \
     `cd "$GEULBASE/publish" && find chrome -type f` \
     `cd "$GEUL_DIR" && find chrome -type f` \
     .htaccess \
-    `geul-ls "$@" | sed 's/$/.txt/p; s/\.txt/.xhtml/p; s/\.xhtml/.html/p'`
+    `geul-ls "$@" | sed -n 's/$/.txt/p; s/\.txt/.xhtml/p; s/\.xhtml/.html/p'`
 
-SHOW_PROGRESS=true requires "$@"
+requires SHOW_PROGRESS=true "$@"

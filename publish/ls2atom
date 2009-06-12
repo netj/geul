@@ -4,10 +4,24 @@
 # Created: 2009-06-10
 set -e
 
-# TODO
-echo '<index xmlns="http://netj.org/2009/geul">'
-geul-ls "$@" |
-while read a; do
-    geul-info "$a"
-done
-echo "</index>"
+GEUL_DIR=${GEUL_DIR:-`geuldir`}
+
+Meta=$1; shift
+
+entries=(`sed 's#$#.atom-entry#' | intermediates`)
+requires "${entries[@]}" >/dev/null
+
+echo '<feed xmlns="http://www.w3.org/2005/Atom" xmlns:geul="http://netj.org/2009/geul">'
+# TODO title
+# TODO subtitle?
+# TODO author+
+# TODO id
+# TODO link+
+# TODO icon?
+# TODO logo?
+# TODO rights?
+# TODO updated
+# TODO generator
+
+cat "${entries[@]}"
+echo "</feed>"
