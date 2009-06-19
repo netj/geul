@@ -144,11 +144,11 @@ html>body #body pre {
     padding: 0.5em;
 }
 
-#actions, #tools, #copyright {
+#actions {
     font-size: 0.8em;
 }
 @media print {
-    #actions, #tools {
+    #actions {
         display: none;
     }
 }
@@ -159,6 +159,7 @@ html>body #body pre {
 
 #updating {
     font-size: 0.9em;
+    text-align: right;
 }
 
 #head, #head *, #foot, #foot * {
@@ -177,7 +178,7 @@ html>body #body pre {
     color: #114;
 }
 
-#body {
+#main {
     padding:1em;
 }
 
@@ -235,13 +236,6 @@ html>body #body pre {
     form#comment {
         display: none;
     }
-}
-
-#search {
-    display: none;
-}
-#search * {
-    color: black;
 }
 
 .rss-item {

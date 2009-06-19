@@ -63,29 +63,17 @@ Created: 2009-06-04
     </xsl:template>
 
     <xsl:template match="*" mode="head">
-        <table id="head" class="layout">
-            <tbody>
-                <tr>
-                    <td rowspan="2" style="text-align:left;">
-                        <h1 id="title">
-                            <xsl:apply-templates select="." mode="title"/>
-                        </h1>
-                    </td>
-                    <td style="text-align:right;">
-                        <div id="actions" class="tools">
-                            <xsl:apply-templates select="." mode="actions"/>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td style="text-align:right;">
-                        <div id="updating">
-                            <xsl:apply-templates select="." mode="updating"/>
-                        </div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+        <div id="head" class="layout">
+            <h1 id="title">
+                <xsl:apply-templates select="." mode="title"/>
+            </h1>
+            <div id="updating">
+                <xsl:apply-templates select="." mode="updating"/>
+            </div>
+            <div id="actions" class="tools">
+                <xsl:apply-templates select="." mode="actions"/>
+            </div>
+        </div>
     </xsl:template>
 
     <xsl:template match="*" mode="body">
@@ -94,29 +82,12 @@ Created: 2009-06-04
 
     <xsl:template match="*" mode="foot">
         <div id="foot" class="layout">
-            <div id="tools" class="tools">
-                <xsl:apply-templates select="." mode="tools"/>
-            </div>
+            <xsl:comment> foot </xsl:comment>
         </div>
     </xsl:template>
 
     <xsl:template match="*" mode="title">
         <xsl:value-of select="//html:head/html:title"/>
-    </xsl:template>
-
-    <xsl:template match="*" mode="actions">
-        <!--
-        <ul>
-            <xsl:if test="$IdMonth != ''">
-                <li><a href="{$IdMonth}/">달력</a></li>
-            </xsl:if>
-            <li><a href="./{$Id}">읽기</a></li>
-            <li><a href="./{$Id}:changes">바뀐 점</a></li>
-            <li><a href="./{$Id}:related">관련 글</a></li>
-            <li><a href="./{$Id}:watch">지켜보기</a></li>
-            <li><a href="./{$Id}:printable">인쇄판</a></li>
-        </ul>
-        -->
     </xsl:template>
 
     <xsl:template match="*" mode="updating">
@@ -134,21 +105,19 @@ Created: 2009-06-04
         </div>
     </xsl:template>
 
-    <xsl:template match="*" mode="tools">
+    <xsl:template match="*" mode="actions">
+        <xsl:comment> actions </xsl:comment>
         <!--
         <ul>
-            <li><a href="http://validator.w3.org/check/referer">XHTML</a></li>
-            <li><a href="http://jigsaw.w3.org/css-validator/check/referer">CSS</a></li>
-            <li><a><xsl:attribute name="href">
-                        <xsl:call-template name="xml-url"/>
-                    </xsl:attribute>XML</a></li>
-            <li><a href="./{$Path}:edit">고치기</a></li>
+            <xsl:if test="$IdMonth != ''">
+                <li><a href="{$IdMonth}/">달력</a></li>
+            </xsl:if>
+            <li><a href="./{$Id}">읽기</a></li>
+            <li><a href="./{$Id}:changes">바뀐 점</a></li>
+            <li><a href="./{$Id}:related">관련 글</a></li>
+            <li><a href="./{$Id}:watch">지켜보기</a></li>
+            <li><a href="./{$Id}:printable">인쇄판</a></li>
         </ul>
-    <xsl:template name="xml-url">
-        <xsl:value-of select="$Path"/><xsl:text>.xml</xsl:text>
-    </xsl:template>
-
-
         -->
     </xsl:template>
 

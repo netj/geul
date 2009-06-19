@@ -4,7 +4,8 @@
  * Created: 2004-08-25
  */
 
-@import url(bood.css);
+@import url(geul.css);
+
 /* some styles for tags */
 body {
     color: #222;
@@ -106,7 +107,7 @@ form {
     font-size: 0.9em;
 }
 
-#page-title {
+#title {
     margin: 0px;
 }
 
