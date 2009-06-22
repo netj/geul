@@ -60,6 +60,7 @@ Created: 2009-06-04
         <title><xsl:value-of select="normalize-space(//html:head/html:title)"/></title>
         <link rel="stylesheet" type="text/css" href="chrome/geul.css"/>
         <script type="text/javascript" src="chrome/geul.js">;</script>
+        <meta name="PermaLink" content="{$BaseURL}{$ArticleId}"/>
     </xsl:template>
 
     <xsl:template match="*" mode="head">

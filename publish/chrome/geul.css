@@ -12,10 +12,10 @@ html {
 }
 
 body {
-    font-family: Century, Palatino Linotype, Bitstream Charter, 은 바탕, UnBatang, 바탕, Batang, serif;
+    font-family: serif;
 }
 .tools {
-    font-family: Bitstream Vera Sans, Tahoma, 맑은 고딕, Malgun Gothic, 은 돋움, UnDotum, 돋움, Dotum, sans-serif;
+    font-family: sans-serif;
 }
 
 textarea, input {
@@ -23,7 +23,7 @@ textarea, input {
 }
 
 pre, tt, textarea, input {
-    font-family: Courier New, Andale Mono, Lucida Console, 은 바탕, UnBatang, 바탕체, Batangche, monospace;
+    font-family: monospace;
     overflow: auto;
 }
 
@@ -62,7 +62,7 @@ form {
 }
 
 h1, h2, h3, h4, h5, h6 {
-    font-family: Bitstream Vera Sans, Tahoma, 맑은 고딕, Malgun Gothic, 은 돋움, UnDotum, 돋움, Dotum, sans-serif;
+    font-family: sans-serif;
 }
 
 #body h2, #body h3, #body h4, #body h5, #body h6 {
