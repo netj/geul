@@ -4,7 +4,7 @@
 # Created: 2009-06-05
 set -e
 
-export PERLLIB="$GEULBASE/bood:$GEULBASE/bood/perllib"
+export PERLLIB="$GEUL_BASE/bood:$GEUL_BASE/bood/perllib"
 
 exec perl -Mutf8 -MBood -e '
 $x=Bood::body2xml(\*STDIN);

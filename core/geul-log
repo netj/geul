@@ -3,10 +3,8 @@
 # Author: Jaeho Shin <netj@sparcs.org>
 # Created: 2009-03-15
 set -e
-
-GEUL_DIR=${GEUL_DIR:-`geuldir`}
-export GEUL_DIR
-GEUL_PATH=`geulpath`
+. "$GEUL.sh"
+. "$GEUL.this-runs-on-stage"
 
 Article=$1; shift
 Id=`geul-path-parse "$Article"`

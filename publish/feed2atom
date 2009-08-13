@@ -3,12 +3,10 @@
 # Author: Jaeho Shin <netj@sparcs.org>
 # Created: 2009-06-12
 set -e
-
-GEUL_DIR=${GEUL_DIR:-`geuldir`}
-export GEUL_DIR
+. "$GEUL.sh"
+. "$GEUL.this-runs-on-stage"
 
 Article=$1; shift
-Feed=$1; shift
 Meta=$1; shift
 
 while read n v; do
@@ -18,23 +16,31 @@ while read n v; do
         Feed-Size:)   feedsize=$v ;;
         "") break ;;
     esac
-done <"$Feed"
+done <"$Meta"
 
-# default configs
-if [ -z "$feedmethod" ]; then
+# fallback
+if [ -z "$feedmethod" -o x"$feedmethod" = x"links" ]; then
     feedmethod=links-both
-    feedtarget=$Article
-    feedsize=
 fi
 
+# default values
+case "$feedmethod" in
+    links-*)
+    : ${feedtarget:=$Article} ${feedsize:=}
+    ;;
+    list)
+    : ${feedtarget:=*} ${feedsize:=}
+    ;;
+esac
 
+# generate feed
 case "$feedmethod" in
     links-*) geul-links ${feedmethod#links-} $feedtarget ;;
-    list)    geul-ls -t $feedtarget ;;
+    list)    geul-ls -At $feedtarget ;;
 esac |
 if [ -n "$feedsize" ]
 then head -n $feedsize
 else cat
 fi |
-ls2atom "$Meta"
+ls2atom "$Article" "$Meta"
 

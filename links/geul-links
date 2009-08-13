@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+# geul-links -- interface to the links database
+# Author: Jaeho Shin <netj@sparcs.org>
+# Created: 2009-03-10
+set -e
+

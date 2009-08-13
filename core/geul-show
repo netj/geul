@@ -3,20 +3,18 @@
 # Author: Jaeho Shin <netj@sparcs.org>
 # Created: 2009-03-10
 set -e
-
-GEUL_DIR=${GEUL_DIR:-`geuldir`}
-export GEUL_DIR
-GEUL_PATH=`geulpath`
+. "$GEUL.sh"
+. "$GEUL.this-runs-on-stage"
 
 Article=$1; shift
 Version=$1; shift || true
 
-Id=`geul-path-parse "$Article"`
+Path=`geul-path-parse "$Article"`
 
 tmp=`mktemp -d /tmp/geul.XXXXXX`
 trap "rm -rf $tmp" EXIT
 
-rcsv="$GEUL_DIR/archive/$Id.txt,v"
+rcsv="$GEUL_DIR/archive/$Path,v"
 ropt=${Version:+-r1.$Version}
 
 cd $tmp

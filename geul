@@ -26,11 +26,12 @@
 set -e
 
 # boot up and discover environment
-GEUL=`readlink -f "$0"`
-GEULBASE=`dirname "$GEUL"`
-export GEULBASE
+Self=`readlink -f "$0"`
+GEUL_BASE=`dirname "$Self"`
+GEUL="$GEUL_BASE/core/"
+export GEUL_BASE GEUL
 
-for m in "$GEULBASE"/*/.module
+for m in "$GEUL_BASE"/*/.module
 do PATH="${m%/.module}:$PATH"
 done
 

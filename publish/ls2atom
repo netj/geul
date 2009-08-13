@@ -3,9 +3,9 @@
 # Author: Jaeho Shin <netj@sparcs.org>
 # Created: 2009-06-10
 set -e
+. "$GEUL.sh"
 
-GEUL_DIR=${GEUL_DIR:-`geuldir`}
-
+Article=$1; shift
 Meta=$1; shift
 
 entries=(`sed 's#$#.atom-entry#' | intermediates`)
@@ -23,5 +23,6 @@ echo '<feed xmlns="http://www.w3.org/2005/Atom" xmlns:geul="http://netj.org/2009
 # TODO updated
 # TODO generator
 
-cat "${entries[@]}"
+# TODO try to prevent recursion
+cat "${entries[@]}" || true
 echo "</feed>"

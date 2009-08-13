@@ -1,22 +1,22 @@
 #!/usr/bin/env bash
-# geuldir -- find GEUL_DIR
+# find-stage -- find GEUL_STAGE
 # Author: Jaeho Shin <netj@sparcs.org>
 # Created: 2009-06-04
 set -e
 
-is-geul-root() { [ -d .geul/archive ]; }
+we-reached-stage() { [ -d .geul/archive ]; }
 
 is-supported-format() {
     [ v"`cat .geul/format 2>/dev/null`" == v1 ]
 }
 
-until is-geul-root || [ "$PWD" = / ]
+until we-reached-stage || [ "$PWD" = / ]
 do cd ..
 done
 
-if is-geul-root; then
+if we-reached-stage; then
     if is-supported-format; then
-        echo $PWD/.geul
+        echo "$PWD"
     else
         error "$PWD/.geul: unsupported repository version"
         false

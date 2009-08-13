@@ -42,70 +42,69 @@ chrome/%:: $(GEUL_DIR)/chrome/%
 	mkdir -p $(@D)
 	ln -f $< $@
 
-chrome/%:: $(GEULBASE)/publish/chrome/%
+chrome/%:: $(GEUL_BASE)/publish/chrome/%
 	$(progress)
 	mkdir -p $(@D)
 	install -m +r-wx $< $@
 
 
 ## article
-article_xsl:=$(GEULBASE)/publish/article.xsl
+# text-based
+article_xsl:=$(GEUL_BASE)/publish/article.xsl
 %.xhtml: $T%.xhtml $(article_xsl) %.atom
 	$(progress)
 	xslt "$(article_xsl)" $< $@ \
 	    --param ArticleId "'$*'" \
 	    $${GEUL_BASEURL:+--param BaseURL "'$$GEUL_BASEURL'"}
 	touch -r $*.txt $@
-
-$T%.xhtml: $T%.xhtml-head $T%.text-body
+$T%.xhtml: $T%.xhtml-head %.txt
 	save-output $@ text2xhtml $^
 $T%.xhtml-head: $T%.meta $T%.log
 	save-output $@ meta2xhtml-head $* $^
-$T%.meta: $T%.text-head $T%.log
-	save-output $@ text-head2meta $* $^
 
-$T%.text-head: %.txt
-	save-output $@ hd <$<
-$T%.text-body: %.txt
-	save-output $@ tl <$<
-
-
+$T%.summary: $T%.meta %.txt
+	save-output $@ text2summary $^
+$T%.meta: %.txt $T%.log
+	save-output $@ text2meta $* $^
 $T%.log: %.txt
 	save-output $@ geul-log $*
 
 .SECONDEXPANSION:
-%.txt: $(GEUL_DIR)/archive/$$@,v
+%:: $(GEUL_DIR)/archive/$$@,v
 	$(progress)
 	save-output $@ geul-show $*
 	touch -r $< $@
 
+# See http://www.gnu.org/software/make/manual/make.html#Multiple-Rules
+# xhtml-based
+$T%.summary: $T%.meta %.xhtml
+	# TODO
+	echo XXX $@: $^ >&2
+	touch -r $< $@
+$T%.meta:: %.xhtml
+	# TODO
+	echo XXX $@: $^ >&2
+	touch -r $< $@
+
+
 ## feed
-
-# TODO
-#calendar_index_xsl:=$(GEULBASE)/publish/index-calendar.xsl
-#%.xhtml: %.atom %.month
-#	$(progress)
-#	xslt "$(calendar_index_xsl)" $< $@
-
 .PHONY: %.atom
-%.atom: %.feed $T%.meta
-	$(progress)
-	save-output $@ feed2atom $* $^
-%.atom: ;
+%.atom: $T%.meta
+	if grep -qi ^Feed-Method: $<; then \
+	    $(progress); \
+	    save-output $@ feed2atom $* $^; \
+	fi
 
-$T%.atom-entry: $T%.meta $T%.summary $T%.text-body
-	save-output $@ text2atom-entry $^
-
-$T%.summary: $T%.meta $T%.text-body
-	save-output $@ text2summary $^
+$T%.atom-entry: $T%.meta $T%.summary
+	save-output $@ meta2atom-entry $^
 
 ## miscellanea
 .PHONY: .htaccess
 .htaccess:
 	$(progress)
-	f="$(GEULBASE)/publish/htaccess"; \
+	f="$(GEUL_BASE)/publish/htaccess"; \
 	if grep "# Begin of Geul Configuration" $@ &>/dev/null; \
-	then screen -Dm vim $@ \
+	then screen -Dm vim -n $@ \
 	    +"/# Begin of Geul Configuration" \
 	    +"norm V/# End of Geul Configurations" \
 	    +"r $$f" +"norm -dd" \

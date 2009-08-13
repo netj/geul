@@ -14,7 +14,9 @@ Created: 2009-06-04
     exclude-result-prefixes="geul html exsl dt dc"
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
+    <xsl:import href="id.xsl"/>
     <xsl:import href="date.xsl"/>
+    <xsl:import href="atom2html.xsl"/>
 
     <xsl:output method="xml"/>
 
@@ -33,6 +35,9 @@ Created: 2009-06-04
             </xsl:call-template>
         </xsl:if>
     </xsl:template>
+    <xsl:variable name="BaseURLPath"
+        select="concat('/', substring-after(
+            substring-after($BaseURL, '://'), '/'))"/>
 
     <xsl:template match="/">
         <html>
@@ -151,11 +156,24 @@ Created: 2009-06-04
     </xsl:template>
     -->
 
-    <!-- Use identity transform as default.
-    See: http://www.dpawson.co.uk/xsl/sect2/identity.html#d5343e103 -->
-    <xsl:template match="node()|@*">
+    <xsl:template match="html:a">
         <xsl:copy>
-            <xsl:apply-templates select="node()|@*"/>
+            <xsl:for-each select="@*">
+                <xsl:choose>
+                    <xsl:when test="name(.) = 'href' and
+                        (not(starts-with(., '/') or contains(., '://')))">
+                        <xsl:attribute name="href">
+                            <xsl:value-of select="$BaseURLPath"/>
+                            <xsl:value-of select="."/>
+                        </xsl:attribute>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:copy-of select="."/>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:for-each>
+            <!-- TODO replace with title -->
+            <xsl:copy-of select="node()"/>
         </xsl:copy>
     </xsl:template>
 

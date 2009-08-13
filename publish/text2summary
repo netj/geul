@@ -3,9 +3,10 @@
 # Author: Jaeho Shin <netj@sparcs.org>
 # Created: 2009-06-12
 set -e
+. "$GEUL.sh"
 
 Meta=$1; shift
-TextBody=$1; shift
+Text=$1; shift
 
 # TODO make use of $Meta
-exec sed -n '1,/^$/ p' <"$TextBody"
+tl <"$Text" | sed -n '1,/^$/ p'

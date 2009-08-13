@@ -21,10 +21,10 @@ show-embedded-help() {
 }
 
 if [ $# -eq 0 ]; then
-    show-embedded-help "$GEULBASE/geul"
+    show-embedded-help "$GEUL_BASE/geul"
 else
     topic=$1; shift
-    helproot="$GEULBASE/help"
+    helproot="$GEUL_BASE/help"
     doc="$helproot/$topic.txt"
     if [ -f "$doc" ]; then
         # show if help topic is available

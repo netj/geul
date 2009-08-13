@@ -4,6 +4,8 @@
 # Author: Jaeho Shin <netj@sparcs.org>
 # Created: 2009-06-05
 set -e
+. "$GEUL.sh"
+. "$GEUL.this-runs-on-stage"
 
 Article=$1; shift
 

@@ -3,7 +3,10 @@
 # Author: Jaeho Shin <netj@sparcs.org>
 # Created: 2009-06-10
 set -e
+. "$GEUL.sh"
+. "$GEUL.this-runs-on-stage"
 
-GEUL_DIR=${GEUL_DIR:-`geuldir`}
-cd "$GEUL_DIR/.."
-"$GEULBASE"/publish/publish.mk -rs "$@"
+if [ $# -gt 0 ]; then
+    cd "$GEUL_STAGE"
+    "$GEUL_BASE"/publish/publish.mk -rs "$@"
+fi

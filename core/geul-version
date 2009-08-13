@@ -2,4 +2,4 @@
 # geul-version -- show version
 # Author: Jaeho Shin <netj@sparcs.org>
 # Created: 2009-06-05
-exec cat $GEULBASE/ident
+exec cat "$GEUL_BASE/ident"

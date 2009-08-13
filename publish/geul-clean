@@ -3,15 +3,15 @@
 # Author: Jaeho Shin <netj@sparcs.org>
 # Created: 2009-06-06
 set -e
-
-GEUL_DIR=${GEUL_DIR:-`geuldir`}
-export GEUL_DIR
+. "$GEUL.sh"
+. "$GEUL.this-runs-on-stage"
 
 clean() {
     local a=$1; shift
     (
-    cd "$GEUL_DIR/.."
-    rm -vf .geul."$a".* "$a".atom
+    cd "$GEUL_STAGE"
+    rm -vf "`intermediates <<<"$a"`".* "$a".atom
+    # TODO treat .atom specially
     set -- "$a".{html,xhtml,txt} "$GEUL_DIR/archive/$a.txt,v"
     local derivative=$1; shift
     while origin=$1; shift; do
@@ -30,5 +30,5 @@ done
 
 # remove empty containing directories
 for d in `geul-ls "$@" | sed 's#/[^/]*$##' | sort | uniq`
-do rmdir -p "$GEUL_DIR/../$d" 2>/dev/null || true
+do rmdir -p "$GEUL_STAGE/$d" 2>/dev/null || true
 done

@@ -3,13 +3,14 @@
 # Author: Jaeho Shin <netj@sparcs.org>
 # Created: 2009-03-15
 set -e
+. "$GEUL.sh"
 
 Head=$1; shift
-TextBody=$1; shift
+Text=$1; shift
 
 echo '<html xmlns="http://www.w3.org/1999/xhtml">'
 cat "$Head"
 echo '<body>'
-cat "$TextBody" | geul-bood
+tl <"$Text" | geul-bood
 echo '</body>'
 echo '</html>'

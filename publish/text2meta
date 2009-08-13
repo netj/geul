@@ -1,11 +1,12 @@
 #!/usr/bin/env bash
-# text-head2meta -- combine header and revision log into metadata in RFC 2822 form
+# text2meta -- combine header and revision log into metadata in RFC 2822 form
 # Author: Jaeho Shin <netj@sparcs.org>
 # Created: 2009-06-10
 set -e
+. "$GEUL.sh"
 
 Article=$1; shift
-TextHead=$1; shift
+Text=$1; shift
 Log=$1; shift
 
 Id=`geul-path-parse "$Article"`
@@ -16,7 +17,7 @@ cat "$Log" | hd |
     sed -e 's/^Revision /Revision: /' \
         -e 's/^Date:/Modified:/'
 cat "$Log" | grep '^Date:' | tail -1 | sed 's/^Date:/Created:/'
-cat "$TextHead"
+hd <"$Text"
 } |
 perl -Mutf8 -Mstrict -e '
     our %CanonicalName;

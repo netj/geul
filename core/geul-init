@@ -3,9 +3,12 @@
 # Author: Jaeho Shin <netj@sparcs.org>
 # Created: 2009-06-05
 set -e
+. "$GEUL.sh"
 
+# TODO relax this restriction
 # check sanity
-if GEUL_DIR=${GEUL_DIR:-`geuldir 2>/dev/null`}; then
+if GEUL_STAGE=${GEUL_STAGE:-`find-stage 2>/dev/null`}; then
+    GEUL_DIR=${GEUL_DIR:-$GEUL_STAGE/.geul}
     error "$GEUL_DIR: Geul repository exists"
     error "A Geul repository cannot be initialized inside another one"
     exit 2
