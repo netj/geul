@@ -3,7 +3,7 @@
 # Created: 2009-03-07
 
 NAME:=geul
-VERSION:=0.1
+VERSION:=0.$(shell date +%Y%m%d)-snapshot
 PRODUCT:=$(NAME)-$(VERSION).sh
 
 MODULES:=$(shell find * -name .module -print | sed 's:/.module$$::')
