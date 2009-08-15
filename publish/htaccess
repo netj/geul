@@ -4,4 +4,5 @@ AddType text/html                       .html
 AddType text/html;qs=0.5                .xhtml
 AddType application/xhtml+xml;qs=0.1    .xml
 AddType text/plain;qs=0.5               .txt
+AddType application/atom+xml;qs=0.5     .atom
 # End of Geul Configuration
