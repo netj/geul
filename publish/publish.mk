@@ -59,15 +59,21 @@ article_xsl:=$(GEUL_BASE)/publish/article.xsl
 	touch -r $*.txt $@
 $T%.xhtml: $T%.xhtml-head %.txt
 	save-output $@ text2xhtml $^
+	touch -r $< $@
 $T%.xhtml-head: $T%.meta $T%.log
 	save-output $@ meta2xhtml-head $* $^
+	touch -r $< $@
 
 $T%.summary: $T%.meta %.txt
 	save-output $@ text2summary $^
+	touch -r $< $@
 $T%.meta: %.txt $T%.log
 	save-output $@ text2meta $* $^
+	touch -r $< $@
 $T%.log: %.txt
-	save-output $@ geul-log $*
+	-geul-log $* >$@
+#	save-output $@ geul-log $*
+	touch -r $< $@
 
 .SECONDEXPANSION:
 %:: $(GEUL_DIR)/archive/$$@,v
@@ -93,10 +99,12 @@ $T%.meta:: %.xhtml
 	if grep -qi ^Feed-Method: $<; then \
 	    $(progress); \
 	    save-output $@ feed2atom $* $^; \
+	    touch -r $< $@; \
 	fi
 
 $T%.atom-entry: $T%.meta $T%.summary
 	save-output $@ meta2atom-entry $^
+	touch -r $< $@
 
 ## miscellanea
 .PHONY: .htaccess

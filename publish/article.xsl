@@ -69,7 +69,7 @@ Created: 2009-06-04
     </xsl:template>
 
     <xsl:template match="*" mode="head">
-        <div id="head" class="layout">
+        <div id="head">
             <h1 id="title">
                 <xsl:apply-templates select="." mode="title"/>
             </h1>
@@ -87,7 +87,7 @@ Created: 2009-06-04
     </xsl:template>
 
     <xsl:template match="*" mode="foot">
-        <div id="foot" class="layout">
+        <div id="foot">
             <xsl:comment> foot </xsl:comment>
         </div>
     </xsl:template>
@@ -99,15 +99,29 @@ Created: 2009-06-04
     <xsl:template match="*" mode="updating">
         <xsl:variable name="revision" select="//geul:revision[1]"/>
         <div id="created" class="timestamp">
-            <xsl:apply-templates select="(
-                //html:meta[@name='created']/@content |
-                //geul:revision[last()]/@date)[1]" mode="date"/>
-            <xsl:if test="contains($revision/@status, 'DRAFT')"> (작성중)</xsl:if>
+            <xsl:choose>
+                <xsl:when test="//geul:revision">
+                    <xsl:apply-templates select="(
+                        //html:meta[@name='created']/@content |
+                        //geul:revision[last()]/@date)[1]" mode="date"/>
+                    <xsl:if test="contains($revision/@status, 'DRAFT')"> (작성중)</xsl:if>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:comment>not available</xsl:comment>
+                </xsl:otherwise>
+            </xsl:choose>
         </div>
         <div id="modified" class="timestamp">
-            <xsl:apply-templates select="$revision/@date" mode="abbrv"/>
-            <xsl:text>, </xsl:text>
-            <xsl:value-of select="$revision/@number"/><xsl:text>판</xsl:text>
+            <xsl:choose>
+                <xsl:when test="//geul:revision">
+                    <xsl:apply-templates select="$revision/@date" mode="abbrv"/>
+                    <xsl:text>, </xsl:text>
+                    <xsl:value-of select="$revision/@number"/><xsl:text>판</xsl:text>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:comment>not available</xsl:comment>
+                </xsl:otherwise>
+            </xsl:choose>
         </div>
     </xsl:template>
 

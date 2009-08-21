@@ -13,6 +13,7 @@ rcsv="$GEUL_DIR/archive/$Id.txt,v"
 tz=`date +%:z`
 
 # retreive info from RCS log
+[ -f "$rcsv" ] &&
 rlog "${@/#/-r1.}" "$rcsv" |
 awk '
     /^revision 1./ { r=1 }

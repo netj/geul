@@ -111,31 +111,6 @@ html>body #body pre {
     max-width: 100%;
 }
 
-.layout {
-    width: 100%;
-}
-
-.layout ul {
-    list-style: none;
-    margin: 0px;
-    padding: 0px;
-}
-
-.layout li {
-    display: inline;
-    padding-left: 0.4em;
-    padding-right: 0.4em;
-    border-left-width: 0.1em;
-    border-left-style: solid;
-}
-.layout img {
-    vertical-align: middle;
-}
-
-.layout ul > li:first-child {
-    border-left-style: none;
-}
-
 .warning {
     background-color: #f42;
     color: #ffe;

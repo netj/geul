@@ -10,11 +10,16 @@ Summary=$1; shift
 
 echo '<entry xmlns="http://www.w3.org/2005/Atom">'
 
+xml-escape() {
+    sed 's/&/\&amp;/g; s/</\&lt;/g; s/>/\&gt;/g; s/"/\&quot;/g;'
+}
 while read n v; do
+    v=`xml-escape <<<"$v"`
     case "$n" in
 # TODO
         Id:)    printf '<link rel="alternative" href="%s"/>' "$v" ;;
         Title:) printf '<title type="text">%s</title>' "$v" ;;
+        Created:) printf '<published>%s</published>' "$v" ;;
     esac
 done <"$Meta"
 
