@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# geul-ls -- retreive list of articles in archive
+# geul-ls -- retreive list of resources in the repository
 # Author: Jaeho Shin <netj@sparcs.org>
 # Created: 2009-03-15
 set -e
@@ -7,32 +7,33 @@ set -e
 . "$GEUL.this-runs-on-stage"
 
 # prepare options
-Prefix=`geul-path-parse`
-Suffices=(.txt .xhtml .html .atom)
-Roots=("$GEUL_STAGE")
-RootsToFind=("$GEUL_STAGE")
-PreservePrefixes=false
-PreserveSuffixes=false
-ListArchive=false
+ListStaged=false
+ListAllResources=false
+PreserveSuffixes=true
 ListOptions=()
-while getopts "Apstr" o; do
+while getopts "atrsS" o; do
     case $o in
-        A) ListArchive=true ;;
-        p) PreservePrefixes=true ;;
-        s) PreserveSuffixes=true ;;
+        a) ListAllResources=true ;;
         t) ListOptions+=(-t) ;;
         r) ListOptions+=(-r) ;;
+        s) ListStaged=true ;;
+        S) PreserveSuffixes=false ;;
     esac
 done
 shift $(($OPTIND - 1))
 
 ## prepare query
-if $ListArchive; then
-    Roots+=("$GEUL_DIR/archive")
-    if [ x"${GEUL_DIR#$GEUL_STAGE}" = x"$GEUL_DIR" ]; then
-        # if GEUL_DIR is not under GEUL_STAGE
-        RootsToFind+=("$GEUL_DIR/archive")
-    fi
+if $ListAllResources; then
+    Suffices=()
+else
+    # TODO move suffices to $GEUL_DIR/suffices
+    Suffices=(.geul .xhtml .html .atom)
+fi
+
+if $ListStaged; then
+    Root="$GEUL_STAGE"
+else
+    Root="$GEUL_DIR/resources"
     for s in "${Suffices[@]}"
     do Suffices+=("$s,v")
     done
@@ -44,18 +45,16 @@ if [ $# -eq 0 ]; then
     set -- "."
 fi
 for Path; do
-    Path=`readlink -f "$Path"`
+    Path=`readlink -f "$Path" || echo "$Path"`
     Path=${Path#$GEUL_STAGE}
     Path=${Path#/}
     Path=${Path%/}
-    for root in "${Roots[@]}"; do
-        p="$root/$Path"
-        if [ -d "$p" ]; then
-            p="${p%/}/"
-        fi
-        p="$p*"
-        pathq+=(${pathq:+-o} -ipath "$p")
-    done
+    p="$Path"
+    if [ -d "$p" ]; then
+        p="${p%/}/"
+    fi
+    p="$p*"
+    pathq+=(${pathq:+-o} -ipath "$p")
 done
 [ ${#pathq[@]} = 0 ] || pathq=(\( "${pathq[@]}" \))
 
@@ -73,48 +72,49 @@ order() {
     xargs ls "${ListOptions[@]}"
 }
 
-remove_prefixes() {
-    local remove_prefixed_roots=
-    for root in "${Roots[@]}"; do
-        remove_prefixed_roots="${remove_prefixed_roots:+$remove_prefixed_roots|}$root"
-    done
-    remove_prefixed_roots=${remove_prefixed_roots//./\\.}
-    remove_prefixed_roots="s:^($remove_prefixed_roots)/::;"
-    sed -E "$remove_prefixed_roots"
-}
 remove_suffices() {
     local remove_suffices="s/(`tr ' ' '|' <<<"${Suffices[*]}" | sed 's/\./\\./g'`)$//;"
     sed -E "$remove_suffices"
 }
+remove_rcs_suffix() {
+    sed -E "s:,v$::"
+}
+
+# TODO remove resources in $GEUL_DIR/ignore file
 
 # pretty printing
 polish() {
-    make_relative_to_stage() {
-        sed -E "s:^$GEUL_STAGE/::"
-    }
     remove_redundancies() {
         awk '!a[$0]++'
     }
-    make_relative_to_stage |
+    make_relative_to_stage() {
+        sed -E "s:^$GEUL_STAGE/::"
+    }
+    make_relative_to_pwd() {
+        # FIXME: use ../
+        sed -E "s:^${GEUL_PATH:+$GEUL_PATH/}::"
+    }
+    local cmd
+    cmd=(remove_redundancies)
+    cmd+=(\| make_relative_to_stage)
+    cmd+=(\| make_relative_to_pwd)
     if [ -t 1 ]; then
-        remove_redundancies |
-        column
-    else
-        remove_redundancies
+        cmd+=(\| column)
     fi
+    eval "${cmd[@]}"
 }
 
 process() {
     local cmd
     cmd=(order)
-    $PreservePrefixes || cmd+=(\| remove_prefixes)
     $PreserveSuffixes || cmd+=(\| remove_suffices)
+    cmd+=(\| remove_rcs_suffix)
     cmd+=(\| polish)
     eval "${cmd[@]}"
 }
 
 
 ## list
-cd "$GEUL_STAGE"
-find "${RootsToFind[@]}" -type f "${pathq[@]}" ! -name ".geul.*" "${nameq[@]}" |
+cd "$Root"
+find * -type f "${pathq[@]}" "${nameq[@]}" |
 process

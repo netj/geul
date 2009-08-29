@@ -10,10 +10,14 @@ GEUL_BASEURL=`cat "$GEUL_DIR/base-url" 2>/dev/null`
 [ -n "$GEUL_BASEURL" ] || error ".geul/base-url: base URL is empty"
 export GEUL_BASEURL
 
-set -- \
+# TODO move comments to $GEUL_DIR/ignore file
+requires SHOW_PROGRESS=true \
     `cd "$GEUL_BASE/publish" && find chrome -type f` \
     `cd "$GEUL_DIR" && find chrome -type f` \
     .htaccess \
-    `geul-ls -As "$@" | sed -E 's/,v$//; /(^|^.+\/)[^.]+$/s#$#&.txt#; s/\.txt$/.xhtml/; s/\.xhtml$/.html/'`
-
-requires SHOW_PROGRESS=true "$@"
+    `geul-ls -a "$@" | sed -E '
+    /\.comments/d
+    s/\.geul$/.xhtml/
+    s/\.xhtml$/.html/
+    s#^#'"${GEUL_PATH:+$GEUL_PATH/}"'#
+    '`

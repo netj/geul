@@ -1,8 +1,12 @@
 # Begin of Geul Configuration
 Options +MultiViews
 AddType text/html                       .html
+AddType application/atom+xml;qs=0.8     .atom
 AddType text/html;qs=0.5                .xhtml
-AddType application/xhtml+xml;qs=0.1    .xml
-AddType text/plain;qs=0.5               .txt
-AddType application/atom+xml;qs=0.5     .atom
+AddType text/plain;qs=0.5               .geul
+AddType application/xhtml+xml;qs=0.3    .xml
+AddType text/plain;qs=0.2               .log
+AddType image/png;qs=0.1                .png
+AddType image/jpeg;qs=0.1               .jpg .jpeg
+AddType image/gif;qs=0.1                .gif
 # End of Geul Configuration

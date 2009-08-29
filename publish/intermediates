@@ -1,5 +1,0 @@
-#!/usr/bin/env bash
-# intermediates -- intermediate names
-# Author: Jaeho Shin <netj@sparcs.org>
-# Created: 2009-06-12
-exec sed -E 's#(^|/)([^/]*)$#\1.geul.\2#'

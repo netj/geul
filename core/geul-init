@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# geul-init -- initialize a Geul archive
+# geul-init -- initialize a Geul repository
 # Author: Jaeho Shin <netj@sparcs.org>
 # Created: 2009-06-05
 set -e
@@ -21,7 +21,7 @@ GEUL_DIR=$1
 # create a repository
 mkdir -p "$GEUL_DIR"
 cd "$GEUL_DIR"
-echo 1 >format
+echo 2 >format
 touch base-url
-mkdir -p archive
+mkdir -p resources
 mkdir -p chrome

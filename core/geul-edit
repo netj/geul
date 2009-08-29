@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# geul-edit -- edit an article
+# geul-edit -- edit a resource
 #
 # Author: Jaeho Shin <netj@sparcs.org>
 # Created: 2009-06-05
@@ -7,7 +7,29 @@ set -e
 . "$GEUL.sh"
 . "$GEUL.this-runs-on-stage"
 
-Article=$1; shift
+Path=$1
+id=`geul-path-parse "$Path"`
 
-mkdir -p "`dirname "$Article"`"
-"${EDITOR:-vi}" "$Article.txt"
+# get inside the repository
+cd "$GEUL_DIR/resources"
+d=`dirname "$id"`
+n=`basename "$id"`
+v="$n,v"
+mkdir -p "${GEUL_PATH:-.}" "$d"
+cd "${GEUL_PATH:-.}"
+
+if [ -d "${Path:-.}" ]; then
+    # launch a sub-shell for directories
+    cd "${Path:-.}"
+    exec "$SHELL"
+else
+    # open files with one's favorite editor
+    if [ ! -f "$Path" -a -f "$Path,v" ]; then
+        # after checking it out
+        (
+        cd "$d"
+        co -q -l "$v"
+        )
+    fi
+    exec edit "$Path"
+fi

@@ -25,6 +25,9 @@
                     </xsl:otherwise>
             </xsl:choose></h2>
             <div class="atom-published">
+                <xsl:if test="not(atom:published)">
+                    <xsl:comment>not available</xsl:comment>
+                </xsl:if>
                 <xsl:apply-templates select="atom:published" mode="date"/>
             </div>
 
@@ -33,7 +36,8 @@
                 <div class="atom-summary">
                     <xsl:choose>
                         <xsl:when test="atom:summary/@type = 'xhtml'">
-                            <xsl:copy-of select="atom:summary/html:div"/>
+                            <!-- TODO process @ links -->
+                            <xsl:apply-templates select="atom:summary/html:div"/>
                         </xsl:when>
                         <xsl:when test="atom:summary/@type = 'text'">
                             <xsl:value-of select="atom:summary"/>
@@ -52,6 +56,12 @@
                 </div>
             </xsl:if>
         </div>
+    </xsl:template>
+
+    <xsl:template match="html:a/@href | html:img/@src">
+        <xsl:call-template name="rewrite-link">
+            <xsl:with-param name="SelfURL" select="ancestor::atom:entry/atom:link/@href"/>
+        </xsl:call-template>
     </xsl:template>
 
 </xsl:stylesheet>

@@ -5,10 +5,10 @@
 set -e
 . "$GEUL.sh"
 
-Article=$1; shift
+Path=$1; shift
 Meta=$1; shift
 
-entries=(`sed 's#$#.atom-entry#' | intermediates`)
+entries=(`sed 's#$#.atom-entry#'`)
 requires "${entries[@]}" >/dev/null
 
 echo '<feed xmlns="http://www.w3.org/2005/Atom" xmlns:geul="http://netj.org/2009/geul">'

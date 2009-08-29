@@ -1,16 +1,16 @@
 #!/usr/bin/env bash
-# geul-log -- retreive revision history of an article
+# geul-log -- retreive revision history of a resource
 # Author: Jaeho Shin <netj@sparcs.org>
 # Created: 2009-03-15
 set -e
 . "$GEUL.sh"
 . "$GEUL.this-runs-on-stage"
 
-Article=$1; shift
-Id=`geul-path-parse "$Article"`
+Path=$1; shift
 
-rcsv="$GEUL_DIR/archive/$Id.txt,v"
-tz=`date +%:z`
+id=`geul-path-parse "$Path"`
+rcsv="$GEUL_DIR/resources/$id,v"
+tz=Z # `date +%:z` # FIXME adjust datetime to local timezone
 
 # retreive info from RCS log
 [ -f "$rcsv" ] &&

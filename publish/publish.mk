@@ -5,7 +5,6 @@
 SHELL:=$(shell which bash)
 
 GEUL_DIR ?= .geul
-T := .geul.
 
 SHOW_PROGRESS ?= false
 ifeq ($(SHOW_PROGRESS),true)
@@ -19,12 +18,24 @@ ifeq ($(LEAVE_INTERMEDIATES),true)
 .SECONDARY:
 endif
 
+
+## resources
+.SECONDEXPANSION:
+%:: $(GEUL_DIR)/resources/$$@
+	$(progress)
+	mkdir -p $(@D)
+	install -m a+r-w $< $@
+.SECONDEXPANSION:
+%:: $(GEUL_DIR)/resources/$$@,v
+	$(progress)
+	save-output $@ geul-show $*
+
+
 ## chrome
 chromexsl:=$(GEUL_DIR)/chrome.xsl
 ifeq ($(shell test -e "$(chromexsl)" || echo false),)
     define chrome
 	xslt "$(chromexsl)" $< $@
-	touch -r $< $@
     endef
 else
     chromexsl:=
@@ -51,43 +62,31 @@ chrome/%:: $(GEUL_BASE)/publish/chrome/%
 ## article
 # text-based
 article_xsl:=$(GEUL_BASE)/publish/article.xsl
-%.xhtml: $T%.xhtml $(article_xsl) %.atom
-	$(progress)
+# TODO: clean up extension names
+%.xhtml: %.xhtml-plain $(article_xsl) %.atom
 	xslt "$(article_xsl)" $< $@ \
-	    --param ArticleId "'$*'" \
+	    --param Id "'$*'" \
 	    $${GEUL_BASEURL:+--param BaseURL "'$$GEUL_BASEURL'"}
-	touch -r $*.txt $@
-$T%.xhtml: $T%.xhtml-head %.txt
+%.xhtml-plain: %.xhtml-head %.geul
 	save-output $@ text2xhtml $^
-	touch -r $< $@
-$T%.xhtml-head: $T%.meta $T%.log
+%.xhtml-head: %.meta %.log
 	save-output $@ meta2xhtml-head $* $^
-	touch -r $< $@
 
-$T%.summary: $T%.meta %.txt
+%.summary: %.meta %.geul
 	save-output $@ text2summary $^
-	touch -r $< $@
-$T%.meta: %.txt $T%.log
+%.meta: %.geul %.log
 	save-output $@ text2meta $* $^
-	touch -r $< $@
-$T%.log: %.txt
-	-geul-log $* >$@
+%.log: %.geul
+	-geul-log $< >$@
 #	save-output $@ geul-log $*
-	touch -r $< $@
-
-.SECONDEXPANSION:
-%:: $(GEUL_DIR)/archive/$$@,v
-	$(progress)
-	save-output $@ geul-show $*
-	touch -r $< $@
 
 # See http://www.gnu.org/software/make/manual/make.html#Multiple-Rules
 # xhtml-based
-$T%.summary: $T%.meta %.xhtml
+%.summary: %.meta %.xhtml
 	# TODO
 	echo XXX $@: $^ >&2
 	touch -r $< $@
-$T%.meta:: %.xhtml
+%.meta: %.xhtml
 	# TODO
 	echo XXX $@: $^ >&2
 	touch -r $< $@
@@ -95,16 +94,14 @@ $T%.meta:: %.xhtml
 
 ## feed
 .PHONY: %.atom
-%.atom: $T%.meta
+%.atom: %.meta
 	if grep -qi ^Feed-Method: $<; then \
 	    $(progress); \
 	    save-output $@ feed2atom $* $^; \
-	    touch -r $< $@; \
 	fi
 
-$T%.atom-entry: $T%.meta $T%.summary
+%.atom-entry: %.meta %.summary
 	save-output $@ meta2atom-entry $^
-	touch -r $< $@
 
 ## miscellanea
 .PHONY: .htaccess
@@ -119,5 +116,3 @@ $T%.atom-entry: $T%.meta $T%.summary
 	    +wq; \
 	else cat "$$f" >>$@; \
 	fi
-
-

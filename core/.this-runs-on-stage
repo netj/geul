@@ -6,12 +6,12 @@
 if [ -n "$GEUL_STAGE" ]; then
     # if stage is given
     if [ -z "$GEUL_DIR" ]; then
-        # complain unless archive is also given
+        # complain unless repository is also given
         error "both GEUL_STAGE and GEUL_DIR should be specified"
         false
     fi
 else
-    # otherwise, assume archive is on the root of the stage directory
+    # otherwise, assume repository is on the root of the stage directory
     GEUL_STAGE=`find-stage`
     GEUL_DIR="$GEUL_STAGE/.geul"
 fi

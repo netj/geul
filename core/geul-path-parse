@@ -6,4 +6,23 @@ set -e
 . "$GEUL.sh"
 . "$GEUL.this-runs-on-stage"
 
-echo "${GEUL_PATH:+$GEUL_PATH/}$1"
+# XXX to handle relative paths and invalid ones, we can't just do:
+#  echo "${GEUL_PATH:+$GEUL_PATH/}$1"
+
+Path=${1:-$PWD}
+
+invalid-path() {
+    error "$Path: Invalid path"
+    false
+}
+
+id=`readlink -f "$Path"`
+case "$id" in
+    "$GEUL_DIR/resources"*) id=${id#$GEUL_DIR/resources} ;;
+    "$GEUL_DIR"*) invalid-path ;;
+    "$GEUL_STAGE"*) id=${id#$GEUL_STAGE} ;;
+    *) invalid-path ;;
+esac
+
+id=${id#/}
+echo "$id"

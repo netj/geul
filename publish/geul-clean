@@ -6,29 +6,10 @@ set -e
 . "$GEUL.sh"
 . "$GEUL.this-runs-on-stage"
 
-clean() {
-    local a=$1; shift
-    (
-    cd "$GEUL_STAGE"
-    rm -vf "`intermediates <<<"$a"`".* "$a".atom
-    # TODO treat .atom specially
-    set -- "$a".{html,xhtml,txt} "$GEUL_DIR/archive/$a.txt,v"
-    local derivative=$1; shift
-    while origin=$1; shift; do
-        # don't remove newer derivatives
-        [ "$derivative" -nt "$origin" ] && return
-        rm -vf "$derivative"
-        derivative=$origin
-    done
-    )
-}
-
-# remove generated resources of articles
-for a in `geul-ls "$@"`
-do clean "$a"
-done
+# remove staged resources
+geul-ls -a -s "$@" | xargs rm -vf
 
 # remove empty containing directories
-for d in `geul-ls "$@" | sed 's#/[^/]*$##' | sort | uniq`
-do rmdir -p "$GEUL_STAGE/$d" 2>/dev/null || true
+for d in `geul-ls -a "$@" | sed 's#/[^/]*$##' | sort | uniq`
+do rmdir -vp "$GEUL_STAGE/$d" 2>/dev/null || true
 done

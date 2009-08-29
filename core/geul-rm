@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+# geul-rm -- remove resources
+#
+# Author: Jaeho Shin <netj@sparcs.org>
+# Created: 2009-08-27
+set -e
+. "$GEUL.sh"
+. "$GEUL.this-runs-on-stage"
+
+remove() {
+    local endofopt=false
+    local a= args=
+    args=(-v)
+    for a; do
+        if ! $endofopt; then
+            case "$a" in
+                --) endofopt=true; continue ;;
+                -*) args+=("$a") ; continue ;;
+            esac
+        fi
+        args+=("$a")
+        # check validity of path
+        geul-path-parse "$a" >/dev/null
+        # remove archive too if exists
+        local v="$a,v"
+        [ -f "$v" ] && args+=("$v")
+    done
+    rm "${args[@]}"
+}
+
+cd "$GEUL_DIR/resources"
+if [ -d "${GEUL_PATH:-.}" ]; then
+    cd "${GEUL_PATH:-.}"
+    remove "$@"
+else
+    mkdir -p "$GEUL_PATH"
+    cd "$GEUL_PATH"
+    remove "$@"
+    rmdir -p "$GEUL_PATH"
+fi

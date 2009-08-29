@@ -1,23 +1,24 @@
 #!/usr/bin/env bash
-# geul-show -- retreive an article in text source form
+# geul-show -- retreive a resource
 # Author: Jaeho Shin <netj@sparcs.org>
 # Created: 2009-03-10
 set -e
 . "$GEUL.sh"
 . "$GEUL.this-runs-on-stage"
 
-Article=$1; shift
-Version=$1; shift || true
+Path=$1; shift
+Version=$1
 
-Path=`geul-path-parse "$Article"`
+id=`geul-path-parse "$Path"`
+rcsv="$GEUL_DIR/resources/$id,v"
+ropt=${Version:+-r1.$Version}
 
 tmp=`mktemp -d /tmp/geul.XXXXXX`
 trap "rm -rf $tmp" EXIT
 
-rcsv="$GEUL_DIR/archive/$Path,v"
-ropt=${Version:+-r1.$Version}
-
 cd $tmp
 co -q $ropt "$rcsv"
 
-cat "`basename "$rcsv" ,v`"
+name=${rcsv%,v}
+name=${name##*/}
+cat "$name"

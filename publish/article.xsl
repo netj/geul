@@ -7,11 +7,12 @@ Created: 2009-06-04
 <xsl:stylesheet version="1.0"
     xmlns="http://www.w3.org/1999/xhtml"
     xmlns:html="http://www.w3.org/1999/xhtml"
+    xmlns:atom="http://www.w3.org/2005/Atom"
     xmlns:geul="http://netj.org/2009/geul"
     xmlns:exsl="http://exslt.org/common"
     xmlns:dt="http://xsltsl.org/date-time"
     xmlns:dc="http://purl.org/dc/elements/1.1/"
-    exclude-result-prefixes="geul html exsl dt dc"
+    exclude-result-prefixes="html atom geul exsl dt dc"
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
     <xsl:import href="id.xsl"/>
@@ -20,10 +21,10 @@ Created: 2009-06-04
 
     <xsl:output method="xml"/>
 
-    <xsl:param name="ArticleId"/>
+    <xsl:param name="Id"/>
     <xsl:param name="BaseURL">
         <xsl:call-template name="relative-base-url">
-            <xsl:with-param name="path" select="$ArticleId"/>
+            <xsl:with-param name="path" select="$Id"/>
         </xsl:call-template>
     </xsl:param>
     <xsl:template name="relative-base-url">
@@ -65,7 +66,7 @@ Created: 2009-06-04
         <title><xsl:value-of select="normalize-space(//html:head/html:title)"/></title>
         <link rel="stylesheet" type="text/css" href="chrome/geul.css"/>
         <script type="text/javascript" src="chrome/geul.js">;</script>
-        <meta name="PermaLink" content="{$BaseURL}{$ArticleId}"/>
+        <meta name="PermaLink" content="{$BaseURL}{$Id}"/>
     </xsl:template>
 
     <xsl:template match="*" mode="head">
@@ -172,23 +173,49 @@ Created: 2009-06-04
 
     <xsl:template match="html:a">
         <xsl:copy>
-            <xsl:for-each select="@*">
-                <xsl:choose>
-                    <xsl:when test="name(.) = 'href' and
-                        (not(starts-with(., '/') or contains(., '://')))">
-                        <xsl:attribute name="href">
-                            <xsl:value-of select="$BaseURLPath"/>
-                            <xsl:value-of select="."/>
-                        </xsl:attribute>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:copy-of select="."/>
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:for-each>
+            <xsl:apply-templates select="@*"/>
             <!-- TODO replace with title -->
-            <xsl:copy-of select="node()"/>
+            <xsl:apply-templates select="node()"/>
         </xsl:copy>
+    </xsl:template>
+
+    <xsl:template match="html:a/@href | html:img/@src">
+        <xsl:call-template name="rewrite-link"/>
+    </xsl:template>
+
+    <xsl:template name="rewrite-link">
+        <xsl:param name="SelfURL">
+            <!-- @ can mean $Id or atom:link -->
+            <xsl:variable name="atom-link" select="ancestor::atom:entry/atom:link"/>
+            <xsl:choose>
+                <xsl:when test="$atom-link">
+                    <xsl:value-of select="$atom-link/@href"/>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:value-of select="$Id"/>
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:param>
+        <xsl:choose>
+            <xsl:when test="starts-with(., '/') or contains(., '://')">
+                <xsl:copy-of select="."/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:attribute name="{name(.)}">
+                    <xsl:value-of select="$BaseURLPath"/>
+                    <xsl:choose>
+                        <!-- replace only the first @ -->
+                        <xsl:when test="starts-with(., '@')">
+                            <xsl:value-of select="$SelfURL"/>
+                            <xsl:value-of select="substring-after(.,'@')"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:value-of select="."/>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </xsl:attribute>
+            </xsl:otherwise>
+        </xsl:choose>
     </xsl:template>
 
 </xsl:stylesheet>

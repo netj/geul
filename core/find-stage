@@ -4,10 +4,10 @@
 # Created: 2009-06-04
 set -e
 
-we-reached-stage() { [ -d .geul/archive ]; }
+we-reached-stage() { [ -d .geul/resources ]; }
 
 is-supported-format() {
-    [ v"`cat .geul/format 2>/dev/null`" == v1 ]
+    [ v"`cat .geul/format 2>/dev/null`" == v2 ]
 }
 
 until we-reached-stage || [ "$PWD" = / ]

@@ -5,8 +5,7 @@
 set -e
 . "$GEUL.sh"
 
-Article=$1; shift
-
+Path=$1; shift
 Meta=$1; shift
 Log=$1; shift
 

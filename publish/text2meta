@@ -5,14 +5,14 @@
 set -e
 . "$GEUL.sh"
 
-Article=$1; shift
+Path=$1; shift
 Text=$1; shift
 Log=$1; shift
 
-Id=`geul-path-parse "$Article"`
+id=`geul-path-parse "$Path"`
 
 {
-echo "Id: $Id"
+echo "Id: $id"
 cat "$Log" | hd |
     sed -e 's/^Revision /Revision: /' \
         -e 's/^Date:/Modified:/'

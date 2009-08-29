@@ -6,7 +6,7 @@ set -e
 . "$GEUL.sh"
 . "$GEUL.this-runs-on-stage"
 
-Article=$1; shift
+Path=$1; shift
 Meta=$1; shift
 
 while read n v; do
@@ -26,7 +26,7 @@ fi
 # default values
 case "$feedmethod" in
     links-*)
-    : ${feedtarget:=$Article} ${feedsize:=}
+    : ${feedtarget:=$Path} ${feedsize:=}
     ;;
     list)
     : ${feedtarget:=*} ${feedsize:=}
@@ -36,11 +36,11 @@ esac
 # generate feed
 case "$feedmethod" in
     links-*) geul-links ${feedmethod#links-} $feedtarget ;;
-    list)    geul-ls -At $feedtarget ;;
+    list)    geul-ls -t -S $feedtarget ;;
 esac |
 if [ -n "$feedsize" ]
 then head -n $feedsize
 else cat
 fi |
-ls2atom "$Article" "$Meta"
+ls2atom "$Path" "$Meta"
 
