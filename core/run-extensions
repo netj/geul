@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+# run-extensions -- run extended behaviors
+# Author: Jaeho Shin <netj@sparcs.org>
+# Created: 2009-09-01
+set -e
+. "$GEUL.sh"
+
+ExtensionPoint=$1; shift
+
+for e in `type -ap "$ExtensionPoint"`
+do ("$e" "$@")
+done

@@ -28,6 +28,7 @@ remove() {
     rm "${args[@]}"
 }
 
+run-extensions before-geul-rm "$@"
 cd "$GEUL_DIR/resources"
 if [ -d "${GEUL_PATH:-.}" ]; then
     cd "${GEUL_PATH:-.}"

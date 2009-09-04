@@ -37,7 +37,6 @@ done
 
 Subcmd=$1; shift || true
 cmd=geul-$Subcmd
-# TODO before, after
 if type "$cmd" &>/dev/null; then
     exec "$cmd" "$@"
 else
