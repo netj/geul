@@ -7,7 +7,7 @@ set -e
 . "$GEUL.this-runs-on-stage"
 
 # remove staged resources
-geul-ls -a -s "$@" | xargs rm -vf
+geul-ls -as "$@" | xargs rm -vf
 
 # remove empty-containing directories
 for d in `geul-ls -a "$@" | sed '

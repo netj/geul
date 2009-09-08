@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+# geul-republish -- clean and publish
+# Author: Jaeho Shin <netj@sparcs.org>
+# Created: 2009-09-08
+set -e
+. "$GEUL.sh"
+. "$GEUL.this-runs-on-stage"
+
+geul-clean "$@"
+geul-publish "$@"

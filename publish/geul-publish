@@ -10,12 +10,20 @@ GEUL_BASEURL=`cat "$GEUL_DIR/base-url" 2>/dev/null`
 [ -n "$GEUL_BASEURL" ] || error ".geul/base-url: base URL is empty"
 export GEUL_BASEURL
 
+products=()
+for a; do
+    case "$a" in
+        *.*) products+=("$a") ;;
+    esac
+done
+
 requires SHOW_PROGRESS=true \
+    .htaccess \
     `cd "$GEUL_BASE/publish" && find chrome -type f` \
     `cd "$GEUL_DIR" && find chrome -type f` \
-    .htaccess \
+    "${products[@]}" \
     `geul-ls -a "$@" | sed -E '
     s/\.geul$/.xhtml/
     s/\.xhtml$/.html/
-    s#^#'"${GEUL_PATH:+$GEUL_PATH/}"'#
+    '"${GEUL_PATH:+s#^#$GEUL_PATH/#}"'
     '`

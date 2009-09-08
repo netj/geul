@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# geul-update-feeds -- update feeds
+# Author: Jaeho Shin <netj@sparcs.org>
+# Created: 2009-09-08
+set -e
+. "$GEUL.sh"
+. "$GEUL.this-runs-on-stage"
+
+cd "$GEUL_STAGE"
+geul-ls -as '*.atom' |
+xargs geul-republish

@@ -26,7 +26,7 @@ shift $(($OPTIND - 1))
 if $ListAllResources; then
     Suffices=()
 else
-    # TODO move suffices to $GEUL_DIR/suffices
+    # TODO move suffices to $GEUL_DIR/suffices?
     Suffices=(.geul .xhtml .html .atom)
 fi
 
@@ -50,9 +50,6 @@ for Path; do
     Path=${Path#/}
     Path=${Path%/}
     p="$Path"
-    if [ -d "$p" ]; then
-        p="${p%/}/"
-    fi
     p="$p*"
     pathq+=(${pathq:+-o} -ipath "$p")
 done
