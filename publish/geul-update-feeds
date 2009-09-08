@@ -7,5 +7,5 @@ set -e
 . "$GEUL.this-runs-on-stage"
 
 cd "$GEUL_STAGE"
-geul-ls -as '*.atom' |
+geul-ls -as '*.atom' '*/index.json' |
 xargs geul-republish

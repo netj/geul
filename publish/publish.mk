@@ -35,7 +35,7 @@ endif
 chromexsl:=$(GEUL_DIR)/chrome.xsl
 ifeq ($(shell test -e "$(chromexsl)" || echo false),)
     define chrome
-	xslt "$(chromexsl)" $< $@
+	save-output $@ xslt "$(chromexsl)" $<
     endef
 else
     chromexsl:=
@@ -64,7 +64,7 @@ chrome/%:: $(GEUL_BASE)/publish/chrome/%
 article_xsl:=$(GEUL_BASE)/publish/article.xsl
 # TODO: clean up extension names
 %.xhtml: %.xhtml-plain $(article_xsl) %.atom
-	xslt "$(article_xsl)" $< $@ \
+	save-output $@ xslt "$(article_xsl)" $< \
 	    --param Id "'$*'" \
 	    $${GEUL_BASEURL:+--param BaseURL "'$$GEUL_BASEURL'"}
 %.xhtml-plain: %.xhtml-head %.geul
@@ -105,6 +105,10 @@ article_xsl:=$(GEUL_BASE)/publish/article.xsl
 	    save-output $@ feed2atom $* $^; \
 	fi
 
+atom2json_xsl:=$(GEUL_BASE)/publish/atom2json.xsl
+%.json: %.atom
+	$(progress)
+	save-output $@ xslt "$(atom2json_xsl)" $<
 
 ## miscellanea
 .PHONY: .htaccess

@@ -1,29 +1,69 @@
-/* 붓 JavaScript
- * Author: Jaeho Shin <netj@sparcs.kaist.ac.kr>
- * Created: 2004-08-30
+/*
+ * Javascript Vocabularies for Geul
+ * Author: Jaeho Shin <netj@sparcs.org>
+ * Created: 2009-09-08
  */
 
-function go_today() {
-    var d = new Date();
-    var y = d.getYear(), m = d.getMonth() + 1;
-    location = '/' + (y < 2000 ? y + 1900 : y)
-        + '/' + (m < 10 ? '0' + m : m) + '/';
+var PermaLink;
+var GeulID;
+
+var NextGeul;
+var CurrentGeul;
+var PreviousGeul;
+
+function getGeulIndexFor(indexId, asyncTask) {
+    var xmlhttp;
+    if (window.XMLHttpRequest) {
+        // code for IE7+, Firefox, Chrome, Opera, Safari
+        xmlhttp = new XMLHttpRequest();
+    } else if (window.ActiveXObject) {
+        // code for IE6, IE5
+        xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+    } else {
+        alert("Your browser does not support XMLHTTP!");
+    }
+    xmlhttp.onreadystatechange = function() {
+        if (xmlhttp.readyState == 4) {
+            try {
+                var index = eval(xmlhttp.responseText);
+                asyncTask(index);
+            } catch (e) {
+            }
+        }
+    }
+    var indexUrl = document.baseURI + indexId + "/index.json";
+    xmlhttp.open("GET", indexUrl, true);
+    xmlhttp.send(null);
 }
 
-function go_search() {
-    var search = document.getElementById("search");
-    search.style.display = 'block';
-    window.scrollTo(search.offsetLeft, search.offsetTop);
-    search.elements["q"].focus();
+function getNeighborArticlesFor(asyncTask) {
+    PermaLink = document.getElementsByName("PermaLink")[0].content;
+    GeulID = PermaLink.substring(document.baseURI.length);
+    var indexId = parseInt(GeulID.replace(/\/.*$/, ''));
+    if (isNaN(indexId))
+        return;
+    getGeulIndexFor(indexId, function(index) {
+            // index is ordered reverse chronologically
+            for (var i=0; i<index.length; i++) {
+                if (index[i].id == GeulID) {
+                    CurrentGeul = index[i];
+                    if (i > 0)
+                        NextGeul = index[i-1];
+                    else
+                        getGeulIndexFor(indexId+1, function(nextIndex) {
+                                NextGeul = nextIndex[nextIndex.length-1];
+                                asyncTask(NextGeul, PreviousGeul);
+                            });
+                    if (i+1 < index.length)
+                        PreviousGeul = index[i+1];
+                    else
+                        getGeulIndexFor(indexId-1, function(previousIndex) {
+                                PreviousGeul = previousIndex[0];
+                                asyncTask(NextGeul, PreviousGeul);
+                            });
+                    asyncTask(NextGeul, PreviousGeul);
+                    break;
+                }
+            }
+        });
 }
-
-// TODO: fill personal info for comment form from cookie
-
-
-function xbel_open_folder(f) {
-    f.className = 'xbel-folder-opened';
-}
-function xbel_close_folder(f) {
-    f.className = 'xbel-folder';
-}
-
