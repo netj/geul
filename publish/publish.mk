@@ -44,7 +44,7 @@ else
     endef
 endif
 
-%.html: %.xhtml $(chromexsl)
+%.html: %.xhtml $(chromexsl) %.indexed
 	$(progress)
 	$(chrome)
 
@@ -92,16 +92,19 @@ article_xsl:=$(GEUL_BASE)/publish/article.xsl
 	touch -r $< $@
 
 
+## indexing
+%.indexed: %.meta %.summary
+	geul-index add $^
+	touch $@
+
+
 ## feed
-.PHONY: %.atom
 %.atom: %.meta
 	if grep -qi ^Feed-Method: $<; then \
 	    $(progress); \
 	    save-output $@ feed2atom $* $^; \
 	fi
 
-%.atom-entry: %.meta %.summary
-	save-output $@ meta2atom-entry $^
 
 ## miscellanea
 .PHONY: .htaccess

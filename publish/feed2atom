@@ -35,12 +35,11 @@ esac
 
 # generate feed
 case "$feedmethod" in
-    links-*) geul-links ${feedmethod#links-} $feedtarget ;;
-    list)    geul-ls -t -S $feedtarget ;;
+    links-*) geul-links ${feedmethod#links-} "$feedtarget" ;;
+    list)    geul-index ls "$feedtarget" ;;
 esac |
 if [ -n "$feedsize" ]
 then head -n $feedsize
 else cat
 fi |
 ls2atom "$Path" "$Meta"
-

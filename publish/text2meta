@@ -20,6 +20,7 @@ cat "$Log" | grep '^Date:' | tail -1 | sed 's/^Date:/Created:/'
 hd <"$Text"
 } |
 perl -Mutf8 -Mstrict -e '
+# TODO extract this to normalize-meta
     our %CanonicalName;
     sub alias { my $n = shift; $CanonicalName{$_} = $n foreach @_; }
     alias(qw(Title 제목));

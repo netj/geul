@@ -1,0 +1,90 @@
+#!/usr/bin/perl
+# map -- a command-line interface to key-value database
+# Author: Jaeho Shin <netj@sparcs.org>
+# Created: 2009-09-05
+
+use strict;
+use warnings;
+use DB_File;
+
+unless (@ARGV == 1) {
+    print
+"map -- a command-line interface to key-value database
+
+Usage: map DATABASE
+  map waits for COMMANDs to be executed on DATABASE.
+
+  DATABASE
+    Path name to the database file to be manipulated.
+
+  COMMAND is one of the following form:
+    KEY
+      To get value of KEY.  Prints in the following form: \"KEY: VALUE\"
+    KEY: VALUE
+      To update value of KEY to VALUE.
+    ^PREFIX
+      To set a common prefix of keys.
+    -KEY
+      To remove a key-value pair bound to KEY.
+
+";
+    exit 1;
+}
+
+our %Map;
+our $MapPath = shift @ARGV;
+tie %Map, 'DB_File', $MapPath || die "A valid map path must be given";
+
+my $prefix = "";
+my $keyToPut = undef;
+my $valueToPut = undef;
+while (defined (my $l = <>)) {
+    chomp $l;
+    if (defined $valueToPut) {
+        if ($l =~ /^\s+(.+)$/) {
+            # continued value lines are prefixed with whitespaces
+            $valueToPut .= "\n".$1;
+            print $l, "\n";
+            next;
+        } else {
+            # otherwise, end of value
+            $Map{$keyToPut} = $valueToPut;
+            $keyToPut = undef;
+            $valueToPut = undef;
+        }
+    }
+    if ($l =~ /^([^:]*)\s*:\s*(.*)$/) {
+        # put
+        # KEY: VALUE
+        $keyToPut = $prefix.$1;
+        $valueToPut = $2;
+        print $l, "\n";
+    } elsif ($l =~ /^\^\s*(.*)$/) {
+        # prefix
+        # ^PREFIX
+        $prefix = $1;
+        print $l, "\n";
+    } elsif ($l =~ /^-\s*(.*)$/) {
+        # remove
+        # -KEY
+        my $k = $prefix.$1;
+        delete $Map{$k};
+        print $l, "\n";
+    } elsif ($l =~ /^\s*$/) {
+        # empty line
+        # 
+        print $l, "\n";
+    } else {
+        # get
+        # KEY
+        my $k = $prefix.$l;
+        my $v = $Map{$k} || '';
+        $v =~ s/\n/$&\t/gm;
+        printf "%s:%s\n", $l, $v;
+    }
+}
+
+# finish the final put
+$Map{$keyToPut} = $valueToPut if defined $valueToPut;
+
+untie %Map;

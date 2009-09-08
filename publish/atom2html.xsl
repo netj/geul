@@ -36,7 +36,6 @@
                 <div class="atom-summary">
                     <xsl:choose>
                         <xsl:when test="atom:summary/@type = 'xhtml'">
-                            <!-- TODO process @ links -->
                             <xsl:apply-templates select="atom:summary/html:div"/>
                         </xsl:when>
                         <xsl:when test="atom:summary/@type = 'text'">

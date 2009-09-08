@@ -1,0 +1,92 @@
+#!/usr/bin/env bash
+# geul-index -- maintain an index of articles
+#
+# Author: Jaeho Shin <netj@sparcs.org>
+# Created: 2009-09-04
+set -e
+. "$GEUL.sh"
+. "$GEUL.this-runs-on-stage"
+
+IDX="$GEUL_DIR/index"
+run-sql-on-list-db() {
+    [ -e "$IDX/list.db" ] || geul-index init
+    sqlite3 "$IDX/list.db" "$@"
+}
+
+Command=$1; shift
+case "$Command" in
+    init)
+    mkdir -p "$IDX"
+    sqlite3 "$IDX/list.db" "
+        CREATE TABLE Articles (
+            id      VARCHAR(256) PRIMARY KEY            ,
+            title   VARCHAR(512)                        ,
+            date    DATETIME
+        )
+    "
+    ;;
+
+    add)
+    Meta=$1; shift
+    Summary=$1; shift
+    # add/update list
+    eval `parse-meta id title created <"$Meta"`
+    id=${id//\'/\'\'}
+    title=${title//\'/\'\'}
+    created=${created//\'/\'\'}
+    run-sql-on-list-db "
+        DELETE FROM Articles
+        WHERE id='$id'
+        ;
+        INSERT INTO Articles
+        VALUES ('$id', '$title', '$created')
+    "
+    # add/update metadata
+    {
+        echo "^$id "
+        cat "$Meta"
+        echo -n "Summary:"; sed 's/^/ /' <"$Summary"
+    } | map "$IDX/meta.db" >/dev/null
+    ;;
+
+    rm)
+    filter=
+    for Id; do
+        Id=${Id//\'/\'\'}
+        filter="${filter:+$filter OR }id='$Id'"
+    done
+    if [ -n "$filter" ]; then
+        run-sql-on-list-db "
+            DELETE FROM Articles
+            WHERE $filter
+        "
+    fi
+    ;;
+
+    ls)
+    filter=
+    for Patt; do
+        Patt=${Patt//\?/_}
+        Patt=${Patt//\*/%}
+        Patt=${Patt//\'/\'\'}
+        filter="${filter:+$filter OR }id LIKE '$Patt%'"
+    done
+    run-sql-on-list-db "
+        SELECT id FROM Articles
+        ${filter:+WHERE $filter}
+        ORDER BY Articles.date DESC
+    "
+    ;;
+
+    meta)
+    {
+        for Id; do
+            echo "^$Id "
+            echo "Title"
+            echo "Created"
+            echo "Summary"
+            echo
+        done
+    } | map "$IDX/meta.db"
+    ;;
+esac

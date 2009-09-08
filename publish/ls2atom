@@ -2,14 +2,21 @@
 # ls2atom -- transform list of articles into ATOM form
 # Author: Jaeho Shin <netj@sparcs.org>
 # Created: 2009-06-10
+# See: http://tools.ietf.org/html/rfc4287
 set -e
 . "$GEUL.sh"
 
 Path=$1; shift
 Meta=$1; shift
 
-entries=(`sed 's#$#.atom-entry#'`)
-requires "${entries[@]}" >/dev/null
+xml-escape() {
+    x=$1
+    x=${x//&/&amp;}
+    x=${x//</&lt;}
+    x=${x//>/&gt;}
+    x=${x//\"/&quot;}
+    echo -n "$x"
+}
 
 echo '<feed xmlns="http://www.w3.org/2005/Atom" xmlns:geul="http://netj.org/2009/geul">'
 # TODO title
@@ -23,6 +30,41 @@ echo '<feed xmlns="http://www.w3.org/2005/Atom" xmlns:geul="http://netj.org/2009
 # TODO updated
 # TODO generator
 
-# TODO try to prevent recursion
-cat "${entries[@]}" || true
+
+# TODO implement this in Perl to speed up
+# how to emit an ATOM entry
+generate-atom-entry() {
+    eval `parse-meta title created summary`
+    echo '<entry>'
+    printf '<link rel="alternative" href="%s"/>' "`xml-escape "$id"`"
+    printf '<title type="text">%s</title>' "`xml-escape "$title"`"
+    printf '<published>%s</published>' "`xml-escape "$created"`"
+    # TODO translate more tags
+    echo '<summary type="xhtml">'
+    echo '<div xmlns="http://www.w3.org/1999/xhtml">'
+    # TODO try to prevent xinclude recursions
+    geul-bood <<<"$summary"
+    echo '</div>'
+    echo '</summary>'
+    echo '</entry>'
+}
+# entries
+buffer=`mktemp /tmp/geul.ls2atom.XXXXXX`
+trap "rm -f $buffer" EXIT
+xargs geul-index meta |
+while IFS= read -r line; do
+    case "$line" in
+        "") # empty line indicates the end of an entry
+        generate-atom-entry <$buffer
+        ;;
+        ^*) # a new article, reset buffer
+        id=$line; id=${id#^}; id=${id% }
+        : >$buffer
+        ;;
+        *) # otherwise, append to buffer
+        echo "$line" >>$buffer
+        ;;
+    esac
+done
+
 echo "</feed>"

@@ -1,0 +1,44 @@
+#!/usr/bin/perl
+# parse-meta -- parse RFC2822-style headers into shell variable definition syntax
+#
+# Author: Jaeho Shin <netj@sparcs.org>
+# Created: 2009-09-06
+
+use strict;
+use warnings;
+
+our @KeysToParse = @ARGV;
+
+my $key;
+my $value;
+sub emitKey {
+    $key = lc $key;
+    $key =~ s/-/_/g;
+    if (not @KeysToParse or grep quotemeta($key), @KeysToParse) {
+        $value =~ s/'/'\\''/g;
+        printf "%s='%s'\n", $key, $value;
+        $key = undef;
+    }
+}
+while (defined (my $l = <STDIN>)) {
+    chomp $l;
+    if (defined $key) {
+        if ($l =~ /^\s+(.+)$/) {
+            # continued value
+            $value .= "\n".$1;
+            next;
+        } else {
+            # end of value
+            emitKey();
+        }
+    }
+    if ($l =~ /^([^:]+)\s*:\s*(.*)$/) {
+        $key = $1;
+        $value = $2;
+    } elsif ($l =~ /^$/) {
+        last;
+    } else {
+        die "Invalid syntax";
+    }
+}
+emitKey() if defined $key;
