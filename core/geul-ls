@@ -72,6 +72,18 @@ order() {
     xargs ls "${ListOptions[@]}"
 }
 
+remove_ignored() {
+    # remove resources listed in $GEUL_DIR/ignore file
+    local e= p
+    for p in `sed 's/#.*$//' <"$GEUL_DIR/ignore"`; do
+        p=${p//./\\.}
+        p=${p//\*/.*}
+        p=${p//\?/.}
+        e="$e/^$p$/d;"
+    done
+    sed -E "$e"
+}
+
 remove_suffices() {
     local remove_suffices="s/(`tr ' ' '|' <<<"${Suffices[*]}" | sed 's/\./\\./g'`)$//;"
     sed -E "$remove_suffices"
@@ -79,8 +91,6 @@ remove_suffices() {
 remove_rcs_suffix() {
     sed -E "s:,v$::"
 }
-
-# TODO remove resources in $GEUL_DIR/ignore file
 
 # pretty printing
 polish() {
@@ -107,6 +117,9 @@ polish() {
 process() {
     local cmd
     cmd=(order)
+    if [ -r "$GEUL_DIR/ignore" ]; then
+        cmd+=(\| remove_ignored)
+    fi
     $PreserveSuffixes || cmd+=(\| remove_suffices)
     cmd+=(\| remove_rcs_suffix)
     cmd+=(\| polish)
