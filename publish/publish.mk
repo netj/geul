@@ -106,15 +106,24 @@ atom2json_xsl:=$(GEUL_BASE)/publish/atom2json.xsl
 	save-output $@ xslt "$(atom2json_xsl)" $<
 
 ## miscellanea
+tag=of Geul Configuration
+begin=^\# Begin $(tag)$
+end=^\# End $(tag)$
 .PHONY: .htaccess
-.htaccess:
-	$(progress)
+.htaccess:  
 	f="$(GEUL_BASE)/publish/htaccess"; \
-	if grep "# Begin of Geul Configuration" $@ &>/dev/null; \
-	then screen -Dm vim -n $@ \
-	    +"/# Begin of Geul Configuration" \
-	    +"norm V/# End of Geul Configurations" \
-	    +"r $$f" +"norm -dd" \
-	    +wq; \
-	else cat "$$f" >>$@; \
+	if [ -e $@ ]; then \
+	    s1=`sed -n "/$(begin)/,/$(end)/p" <$@ | md5sum`; \
+	    s2=`md5sum <"$$f"`; \
+	    if [ x"$$s1" != x"$$s2" ]; then \
+		$(progress); \
+		screen -Dm vim -n $@ \
+		+"/$(begin)" \
+		+"norm V/$(end)s" \
+		+"r $$f" +"norm -dd" \
+		+wq; \
+	    fi; \
+	else \
+	    $(progress); \
+	    cat "$$f" >>$@; \
 	fi
