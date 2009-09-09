@@ -16,7 +16,7 @@ invalid-path() {
     false
 }
 
-id=`readlink -f "$Path"`
+id=`readlink -f "$Path" || echo "$PWD/$Path"`
 case "$id" in
     "$GEUL_DIR/resources"*) id=${id#$GEUL_DIR/resources} ;;
     "$GEUL_DIR"*) invalid-path ;;
