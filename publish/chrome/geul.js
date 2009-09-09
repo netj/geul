@@ -4,6 +4,7 @@
  * Created: 2009-09-08
  */
 
+var BaseURI = document.baseURI || /* for IE */ document.getElementsByTagName("base").item(0).href;
 var PermaLink;
 var GeulID;
 
@@ -23,22 +24,25 @@ function getGeulIndexFor(indexId, asyncTask) {
         alert("Your browser does not support XMLHTTP!");
     }
     xmlhttp.onreadystatechange = function() {
-        if (xmlhttp.readyState == 4) {
+        if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+            var index;
             try {
-                var index = eval(xmlhttp.responseText);
-                asyncTask(index);
+                index = eval(xmlhttp.responseText);
             } catch (e) {
+                //alert(e.name + ": " + e.message);
+                return;
             }
+            asyncTask(index);
         }
     }
-    var indexUrl = document.baseURI + indexId + "/index.json";
+    var indexUrl = BaseURI + indexId + "/index.json";
     xmlhttp.open("GET", indexUrl, true);
     xmlhttp.send(null);
 }
 
 function getNeighborArticlesFor(asyncTask) {
     PermaLink = document.getElementsByName("PermaLink")[0].content;
-    GeulID = PermaLink.substring(document.baseURI.length);
+    GeulID = PermaLink.substring(BaseURI.length);
     var indexId = parseInt(GeulID.replace(/\/.*$/, ''));
     if (isNaN(indexId))
         return;

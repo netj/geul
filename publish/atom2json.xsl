@@ -18,15 +18,22 @@
             <xsl:with-param name="name" select="'id'"/>
             <xsl:with-param name="value" select="atom:link[@rel='alternative']/@href"/>
         </xsl:call-template>
+        <xsl:text>,&#10;</xsl:text>
         <xsl:call-template name="json-field">
             <xsl:with-param name="name" select="'title'"/>
             <xsl:with-param name="value" select="atom:title"/>
         </xsl:call-template>
+        <xsl:text>,&#10;</xsl:text>
         <xsl:call-template name="json-field">
             <xsl:with-param name="name" select="'published'"/>
             <xsl:with-param name="value" select="atom:published"/>
         </xsl:call-template>
-        <xsl:text>},&#10;</xsl:text>
+        <xsl:text>&#10;</xsl:text>
+        <xsl:text>}</xsl:text>
+        <xsl:if test="position() != last()">
+            <xsl:text>,</xsl:text>
+        </xsl:if>
+        <xsl:text>&#10;</xsl:text>
     </xsl:template>
 
     <xsl:template name="json-field">
@@ -34,7 +41,7 @@
         <xsl:text>: '</xsl:text>
         <!-- TODO escape ' -->
         <xsl:value-of select="$value"/>
-        <xsl:text>',&#10;</xsl:text>
+        <xsl:text>'</xsl:text>
     </xsl:template>
 
 </xsl:stylesheet>
