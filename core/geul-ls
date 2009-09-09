@@ -9,15 +9,15 @@ set -e
 # prepare options
 ListStaged=false
 ListAllResources=false
-PreserveSuffixes=true
+ListId=false
 ListOptions=()
-while getopts "atrsS" o; do
+while getopts "atrsi" o; do
     case $o in
         a) ListAllResources=true ;;
         t) ListOptions+=(-t) ;;
         r) ListOptions+=(-r) ;;
         s) ListStaged=true ;;
-        S) PreserveSuffixes=false ;;
+        i) ListId=true ;;
     esac
 done
 shift $(($OPTIND - 1))
@@ -117,7 +117,7 @@ process() {
     if [ -r "$GEUL_DIR/ignore" ]; then
         cmd+=(\| remove_ignored)
     fi
-    $PreserveSuffixes || cmd+=(\| remove_suffices)
+    ! $ListId || cmd+=(\| remove_suffices)
     cmd+=(\| remove_rcs_suffix)
     cmd+=(\| polish)
     eval "${cmd[@]}"

@@ -30,7 +30,7 @@ case "$Command" in
     Meta=$1; shift
     Summary=$1; shift
     # add/update list
-    eval `parse-meta id title created <"$Meta"`
+    eval `parse-meta Id Title Created <"$Meta"`
     id=${id//\'/\'\'}
     title=${title//\'/\'\'}
     created=${created//\'/\'\'}
@@ -79,14 +79,11 @@ case "$Command" in
     ;;
 
     meta)
-    {
-        for Id; do
-            echo "^$Id "
-            echo "Title"
-            echo "Created"
-            echo "Summary"
-            echo
-        done
-    } | map "$IDX/meta.db"
+    while IFS= read -r id; do
+        echo "^$id "
+        for name; do echo "$name"; done
+        echo
+    done |
+    map "$IDX/meta.db"
     ;;
 esac

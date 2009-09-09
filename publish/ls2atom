@@ -34,7 +34,7 @@ echo '<feed xmlns="http://www.w3.org/2005/Atom" xmlns:geul="http://netj.org/2009
 # TODO implement this in Perl to speed up
 # how to emit an ATOM entry
 generate-atom-entry() {
-    eval `parse-meta title created summary`
+    eval `parse-meta Title Created Summary`
     echo '<entry>'
     printf '<link rel="alternative" href="%s"/>' "`xml-escape "$id"`"
     printf '<title type="text">%s</title>' "`xml-escape "$title"`"
@@ -51,7 +51,7 @@ generate-atom-entry() {
 # entries
 buffer=`mktemp /tmp/geul.ls2atom.XXXXXX`
 trap "rm -f $buffer" EXIT
-xargs geul-index meta |
+geul-index meta Title Created Summary |
 while IFS= read -r line; do
     case "$line" in
         "") # empty line indicates the end of an entry

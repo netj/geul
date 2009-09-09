@@ -6,6 +6,14 @@ set -e
 . "$GEUL.sh"
 . "$GEUL.this-runs-on-stage"
 
-cd "$GEUL_STAGE"
-geul-ls -as '*.atom' '*/index.json' |
+list-feed-ids() {
+    geul ls -i "$@" |
+    geul index meta Feed-Method |
+    grep -B1 Feed-Method:. |
+    sed -nE 's/^\^(.*) $/\1/p'
+}
+
+# publish ATOM and JSON forms of feeds
+list-feed-ids "$@" |
+sed -n 's/$/.atom/p; s/.atom$/.json/p;' |
 xargs geul-republish
