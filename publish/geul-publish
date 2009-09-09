@@ -20,7 +20,6 @@ done
 requires SHOW_PROGRESS=true \
     .htaccess \
     `cd "$GEUL_BASE/publish" && find chrome -type f` \
-    `cd "$GEUL_DIR" && find chrome -type f` \
     "${products[@]}" \
     `geul-ls -a "$@" | sed -E '
     s/\.geul$/.xhtml/

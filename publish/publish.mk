@@ -48,11 +48,6 @@ endif
 	$(progress)
 	$(chrome)
 
-chrome/%:: $(GEUL_DIR)/chrome/%
-	$(progress)
-	mkdir -p $(@D)
-	ln -f $< $@
-
 chrome/%:: $(GEUL_BASE)/publish/chrome/%
 	$(progress)
 	mkdir -p $(@D)
