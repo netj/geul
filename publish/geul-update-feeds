@@ -10,7 +10,7 @@ list-feed-ids() {
     geul ls -i "$@" |
     geul index meta Feed-Method |
     grep -B1 Feed-Method:. |
-    sed -nE 's/^\^(.*) $/\1/p'
+    sed -n 's/^\^\(.*\) $/\1/p'
 }
 
 # publish ATOM and JSON forms of feeds

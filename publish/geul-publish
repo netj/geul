@@ -21,7 +21,7 @@ requires SHOW_PROGRESS=true \
     .htaccess \
     `cd "$GEUL_BASE/publish" && find chrome -type f` \
     "${products[@]}" \
-    `geul-ls -a "$@" | sed -E '
+    `geul-ls -a "$@" | sed '
     s/\.geul$/.xhtml/
     s/\.xhtml$/.html/
     '"${GEUL_PATH:+s#^#$GEUL_PATH/#}"'

@@ -51,10 +51,10 @@ f=${v%,v}
 cd "$d"
 if [ -f "$f" ]; then
     rcs -q -l "$v"
-    ci "${opts[@]}" "$v" 2>&1| sed -E \
-        -e '/<--|^done$/d' \
-        -e 's/^new revision: [0-9]+\.([0-9]+);.*/'"$Path"': Recorded as Revision \1/' \
-        -e 's/^file is unchanged; reverting to previous revision ([0-9]+\.[0-9]+)/'"$Path"': No change to record/'
+    ci "${opts[@]}" "$v" 2>&1| sed \
+        -e '/<--\|^done$/d' \
+        -e 's/^new revision: [0-9][0-9]*\.\([0-9][0-9]*\);.*/'"$Path"': Recorded as Revision \1/' \
+        -e 's/^file is unchanged; reverting to previous revision \([0-9][0-9]*\.[0-9][0-9]*\)/'"$Path"': No change to record/'
 else
     error "$Path: No change to record"
 fi

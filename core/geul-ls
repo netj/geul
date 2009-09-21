@@ -78,15 +78,15 @@ remove_ignored() {
         p=${p//\?/.}
         e="$e/^$p$/d;"
     done
-    sed -E "$e"
+    sed "$e"
 }
 
 remove_suffices() {
-    local remove_suffices="s/(`tr ' ' '|' <<<"${Suffices[*]}" | sed 's/\./\\./g'`)$//;"
-    sed -E "$remove_suffices"
+    local patts=`tr ' ' '|' <<<"${Suffices[*]}" | sed 's/\.\||/\\\\&/g'`
+    sed "s/\($patts\)$//;"
 }
 remove_rcs_suffix() {
-    sed -E "s:,v$::"
+    sed "s:,v$::"
 }
 
 # pretty printing
@@ -95,11 +95,11 @@ polish() {
         awk '!a[$0]++'
     }
     make_relative_to_stage() {
-        sed -E "s:^$GEUL_STAGE/::"
+        sed "s:^$GEUL_STAGE/::"
     }
     make_relative_to_pwd() {
         # FIXME: use ../
-        sed -E "s:^${GEUL_PATH:+$GEUL_PATH/}::"
+        sed "s:^${GEUL_PATH:+$GEUL_PATH/}::"
     }
     local cmd
     cmd=(remove_redundancies)
