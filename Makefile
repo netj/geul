@@ -3,7 +3,7 @@
 # Created: 2009-03-07
 
 NAME:=geul
-VERSION:=1.$(shell date +%Y%m%d)-snapshot
+VERSION:=0.1.$(shell date +%Y%m%d)-snapshot
 PRODUCT:=$(NAME)-$(VERSION).sh
 
 MODULES:=$(shell find * -name .module -print | sed 's:/.module$$::')
@@ -11,11 +11,11 @@ SRCS:= \
       geul \
       ident \
       $(shell find $(MODULES) -type f \
-          \! \( -name '.*sw?' -o -name .DS_Store \))
+	  \! \( -name '.*sw?' -o -name .DS_Store \) | sed 's: :\\ :g')
 
-dist/$(PRODUCT): $(SRCS)
+.build/$(PRODUCT): $(SRCS)
 	mkdir -p $(@D)
-	pojang $^ >$@
+	eval "pojang $(SRCS)" >$@
 	chmod +x $@
 
 ident: Makefile .git/HEAD
@@ -26,10 +26,10 @@ ident: Makefile .git/HEAD
 
 
 .PHONY: all install clean distclean
-all install: dist/$(PRODUCT)
+all install: .build/$(PRODUCT)
 install:
 	install $< ~/bin/$(NAME)
 clean:
-	rm -f dist/$(PRODUCT)
+	rm -f .build/$(PRODUCT)
 distclean:
-	rm -rf dist
+	rm -rf .build

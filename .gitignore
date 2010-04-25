@@ -2,5 +2,5 @@
 .*sw?
 *~
 
-dist
+.build
 ident
