@@ -43,7 +43,7 @@ generate-atom-entry() {
     echo '<summary type="xhtml">'
     echo '<div xmlns="http://www.w3.org/1999/xhtml">'
     # TODO try to prevent xinclude recursions
-    geul-bood <<<"$summary"
+    Markdown.pl <<<"$summary"
     echo '</div>'
     echo '</summary>'
     echo '</entry>'

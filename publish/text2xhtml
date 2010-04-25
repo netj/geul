@@ -11,6 +11,6 @@ Text=$1; shift
 echo '<html xmlns="http://www.w3.org/1999/xhtml">'
 cat "$Head"
 echo '<body>'
-tl <"$Text" | geul-bood
+tl <"$Text" | Markdown.pl
 echo '</body>'
 echo '</html>'
