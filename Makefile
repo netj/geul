@@ -6,7 +6,7 @@ NAME:=geul
 VERSION:=0.1.$(shell date +%Y%m%d)-snapshot
 PRODUCT:=$(NAME)-$(VERSION).sh
 
-MODULES:=$(shell find * -name .module -print | sed 's:/.module$$::')
+MODULES:=$(shell find * -name .module -print | sed 's:/.module$$::' | sort --ignore-case)
 SRCS:= \
       geul \
       ident \
