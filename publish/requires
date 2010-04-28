@@ -4,9 +4,9 @@
 # Created: 2009-06-10
 set -e
 . "$GEUL.sh"
-. "$GEUL.this-runs-on-stage"
+. "$GEUL.running-inside-a-repo"
 
 if [ $# -gt 0 ]; then
-    cd "$GEUL_STAGE"
+    cd "$GEUL_ROOT"
     "$GEUL_BASE"/publish/publish.mk -r -s ${DEBUG:+-d} "$@"
 fi

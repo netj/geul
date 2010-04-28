@@ -4,7 +4,7 @@
 # Created: 2009-06-12
 set -e
 . "$GEUL.sh"
-. "$GEUL.this-runs-on-stage"
+. "$GEUL.running-inside-a-repo"
 
 Path=$1; shift
 Meta=$1; shift

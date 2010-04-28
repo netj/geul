@@ -5,6 +5,7 @@
 SHELL:=$(shell which bash)
 
 GEUL_DIR ?= .geul
+GEUL_STAGE ?= $(GEUL_DIR)/stage
 
 SHOW_PROGRESS ?= false
 ifeq ($(SHOW_PROGRESS),true)
@@ -20,13 +21,11 @@ endif
 
 
 ## resources
-.SECONDEXPANSION:
-%:: $(GEUL_DIR)/resources/$$@
+$(GEUL_STAGE)/%: %
 	$(progress)
 	mkdir -p $(@D)
 	install -m a+r-w $< $@
-.SECONDEXPANSION:
-%:: $(GEUL_DIR)/resources/$$@,v
+$(GEUL_STAGE)/%: %,v
 	$(progress)
 	save-output $@ geul-show $*
 
@@ -44,11 +43,11 @@ else
     endef
 endif
 
-%.html: %.xhtml $(chromexsl) %.indexed
+$(GEUL_STAGE)/%.html: $(GEUL_STAGE)/%.xhtml $(chromexsl) $(GEUL_STAGE)/%.indexed
 	$(progress)
 	$(chrome)
 
-chrome/%:: $(GEUL_BASE)/publish/chrome/%
+$(GEUL_STAGE)/chrome/%:: $(GEUL_BASE)/publish/chrome/%
 	$(progress)
 	mkdir -p $(@D)
 	install -m +r-wx $< $@
@@ -58,50 +57,50 @@ chrome/%:: $(GEUL_BASE)/publish/chrome/%
 # text-based
 article_xsl:=$(GEUL_BASE)/publish/article.xsl
 # TODO: clean up extension names
-%.xhtml: %.xhtml-plain $(article_xsl) %.atom
+$(GEUL_STAGE)/%.xhtml: $(GEUL_STAGE)/%.xhtml-plain $(GEUL_STAGE)/%.atom $(article_xsl) $(GEUL_DIR)/base-url
 	save-output $@ xslt "$(article_xsl)" $< \
 	    --param Id "'$*'" \
 	    $${GEUL_BASEURL:+--param BaseURL "'$$GEUL_BASEURL'"}
-%.xhtml-plain: %.xhtml-head %.geul
+$(GEUL_STAGE)/%.xhtml-plain: $(GEUL_STAGE)/%.xhtml-head $(GEUL_STAGE)/%.geul
 	save-output $@ text2xhtml $^
-%.xhtml-head: %.meta %.log
+$(GEUL_STAGE)/%.xhtml-head: $(GEUL_STAGE)/%.meta $(GEUL_STAGE)/%.log
 	save-output $@ meta2xhtml-head $* $^
 
-%.summary: %.meta %.geul
+$(GEUL_STAGE)/%.summary: $(GEUL_STAGE)/%.meta $(GEUL_STAGE)/%.geul
 	save-output $@ text2summary $^
-%.meta: %.geul %.log
+$(GEUL_STAGE)/%.meta: $(GEUL_STAGE)/%.geul $(GEUL_STAGE)/%.log
 	save-output $@ text2meta $* $^
-%.log: %.geul
+$(GEUL_STAGE)/%.log: $(GEUL_STAGE)/%.geul
 	-geul-log $< >$@
 #	save-output $@ geul-log $*
 
 # See http://www.gnu.org/software/make/manual/make.html#Multiple-Rules
 # xhtml-based
-%.summary: %.meta %.xhtml
+$(GEUL_STAGE)/%.summary: $(GEUL_STAGE)/%.meta $(GEUL_STAGE)/%.xhtml
 	# TODO
 	echo XXX $@: $^ >&2
 	touch -r $< $@
-%.meta: %.xhtml
+$(GEUL_STAGE)/%.meta: $(GEUL_STAGE)/%.xhtml
 	# TODO
 	echo XXX $@: $^ >&2
 	touch -r $< $@
 
 
 ## indexing
-%.indexed: %.meta %.summary
+$(GEUL_STAGE)/%.indexed: $(GEUL_STAGE)/%.meta $(GEUL_STAGE)/%.summary
 	geul-index add $^
 	touch $@
 
 
 ## feed
-%.atom: %.meta
+$(GEUL_STAGE)/%.atom: $(GEUL_STAGE)/%.meta
 	if grep -qi ^Feed-Method: $<; then \
 	    $(progress); \
 	    save-output $@ feed2atom $* $^; \
 	fi
 
 atom2json_xsl:=$(GEUL_BASE)/publish/atom2json.xsl
-%.json: %.atom
+$(GEUL_STAGE)/%.json: $(GEUL_STAGE)/%.atom
 	$(progress)
 	save-output $@ xslt "$(atom2json_xsl)" $<
 
@@ -109,8 +108,8 @@ atom2json_xsl:=$(GEUL_BASE)/publish/atom2json.xsl
 tag=of Geul Configuration
 begin=^\# Begin $(tag)$
 end=^\# End $(tag)$
-.PHONY: .htaccess
-.htaccess:  
+.PHONY: $(GEUL_STAGE)/.htaccess
+$(GEUL_STAGE)/.htaccess:
 	f="$(GEUL_BASE)/publish/htaccess"; \
 	if [ -e $@ ]; then \
 	    s1=`sed -n "/$(begin)/,/$(end)/p" <$@ | md5sum`; \

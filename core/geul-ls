@@ -4,7 +4,7 @@
 # Created: 2009-03-15
 set -e
 . "$GEUL.sh"
-. "$GEUL.this-runs-on-stage"
+. "$GEUL.running-inside-a-repo"
 
 # prepare options
 ListStaged=false
@@ -33,7 +33,7 @@ fi
 if $ListStaged; then
     Root="$GEUL_STAGE"
 else
-    Root="$GEUL_DIR/resources"
+    Root="$GEUL_ROOT"
     for s in "${Suffices[@]}"
     do Suffices+=("$s,v")
     done
@@ -46,7 +46,7 @@ if [ $# -eq 0 ]; then
 fi
 for Path; do
     Path=`readlink -f "$Path" || echo "$Path"`
-    Path=${Path#$GEUL_STAGE}
+    Path=${Path#$GEUL_ROOT}
     Path=${Path#/}
     Path=${Path%/}
     p="$Path"
@@ -95,7 +95,7 @@ polish() {
         awk '!a[$0]++'
     }
     make_relative_to_stage() {
-        sed "s:^$GEUL_STAGE/::"
+        sed "s:^$GEUL_ROOT/::"
     }
     make_relative_to_pwd() {
         # FIXME: use ../

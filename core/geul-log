@@ -4,12 +4,12 @@
 # Created: 2009-03-15
 set -e
 . "$GEUL.sh"
-. "$GEUL.this-runs-on-stage"
+. "$GEUL.running-inside-a-repo"
 
 Path=$1; shift
 
 id=`geul-path-parse "$Path"`
-rcsv="$GEUL_DIR/resources/$id,v"
+rcsv="$GEUL_ROOT/$id,v"
 tz=Z # `date +%:z` # FIXME adjust datetime to local timezone
 
 # retreive info from RCS log

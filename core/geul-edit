@@ -5,13 +5,13 @@
 # Created: 2009-06-05
 set -e
 . "$GEUL.sh"
-. "$GEUL.this-runs-on-stage"
+. "$GEUL.running-inside-a-repo"
 
 Path=$1
 id=`geul-path-parse "$Path"`
 
 # get inside the repository
-cd "$GEUL_DIR/resources"
+cd "$GEUL_ROOT"
 d=`dirname "$id"`
 n=`basename "$id"`
 v="$n,v"

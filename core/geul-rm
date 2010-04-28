@@ -5,7 +5,7 @@
 # Created: 2009-08-27
 set -e
 . "$GEUL.sh"
-. "$GEUL.this-runs-on-stage"
+. "$GEUL.running-inside-a-repo"
 
 remove() {
     local endofopt=false
@@ -29,7 +29,7 @@ remove() {
 }
 
 run-extensions before-geul-rm "$@"
-cd "$GEUL_DIR/resources"
+cd "$GEUL_ROOT"
 if [ -d "${GEUL_PATH:-.}" ]; then
     cd "${GEUL_PATH:-.}"
     remove "$@"

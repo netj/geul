@@ -4,7 +4,7 @@
 # Created: 2009-09-08
 set -e
 . "$GEUL.sh"
-. "$GEUL.this-runs-on-stage"
+. "$GEUL.running-inside-a-repo"
 
 list-feed-ids() {
     geul ls -i "$@" |

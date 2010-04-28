@@ -4,7 +4,7 @@
 # Created: 2009-06-06
 set -e
 . "$GEUL.sh"
-. "$GEUL.this-runs-on-stage"
+. "$GEUL.running-inside-a-repo"
 
 # remove staged resources
 geul-ls -as "$@" | xargs rm -vf

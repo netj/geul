@@ -4,13 +4,13 @@
 # Created: 2009-03-10
 set -e
 . "$GEUL.sh"
-. "$GEUL.this-runs-on-stage"
+. "$GEUL.running-inside-a-repo"
 
 Path=$1; shift
 Version=$1
 
 id=`geul-path-parse "$Path"`
-rcsv="$GEUL_DIR/resources/$id,v"
+rcsv="$GEUL_ROOT/$id,v"
 ropt=${Version:+-r1.$Version}
 
 tmp=`mktemp -d /tmp/geul.XXXXXX`

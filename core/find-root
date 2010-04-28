@@ -1,20 +1,22 @@
 #!/usr/bin/env bash
-# find-stage -- find GEUL_STAGE
+# find-root -- find GEUL_ROOT
 # Author: Jaeho Shin <netj@sparcs.org>
 # Created: 2009-06-04
 set -e
 
-we-reached-stage() { [ -d .geul/resources ]; }
-
-is-supported-format() {
-    [ v"`cat .geul/format 2>/dev/null`" == v2 ]
+we-reached-root() {
+    [ -d .geul -a -d .geul/stage ]
 }
 
-until we-reached-stage || [ "$PWD" = / ]
+is-supported-format() {
+    [ v"`cat .geul/format 2>/dev/null`" == v1 ]
+}
+
+until we-reached-root || [ "$PWD" = / ]
 do cd ..
 done
 
-if we-reached-stage; then
+if we-reached-root; then
     if is-supported-format; then
         echo "$PWD"
     else

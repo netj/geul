@@ -4,7 +4,7 @@
 # Created: 2009-06-04
 set -e
 . "$GEUL.sh"
-. "$GEUL.this-runs-on-stage"
+. "$GEUL.running-inside-a-repo"
 
 GEUL_BASEURL=`cat "$GEUL_DIR/base-url" 2>/dev/null`
 [ -n "$GEUL_BASEURL" ] || error ".geul/base-url: base URL is empty"
@@ -17,12 +17,17 @@ for a; do
     esac
 done
 
-requires SHOW_PROGRESS=true \
-    .htaccess \
-    `cd "$GEUL_BASE/publish" && find chrome -type f` \
-    "${products[@]}" \
-    `geul-ls -a "$@" | sed '
-    s/\.geul$/.xhtml/
-    s/\.xhtml$/.html/
-    '"${GEUL_PATH:+s#^#$GEUL_PATH/#}"'
-    '`
+{
+    echo .htaccess
+    (cd "$GEUL_BASE/publish" && find chrome -type f)
+    for a in "${products[@]}"; do
+        echo "$a"
+    done
+    geul-ls -a "$@" | sed '
+        s/\.geul$/.xhtml/
+        s/\.xhtml$/.html/
+        '"${GEUL_PATH:+s#^#$GEUL_PATH/#}"'
+        '
+} |
+sed 's#^#'"$GEUL_STAGE"'/#' |
+xargs requires SHOW_PROGRESS=true
