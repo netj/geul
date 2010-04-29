@@ -7,13 +7,19 @@ set -e
 . "$GEUL.running-inside-a-repo"
 
 # remove staged resources
-geul-ls -as "$@" | xargs rm -vf
+geul-ls -as "$@" | (cd "$GEUL_STAGE"; xargs rm -vf)
 
 # remove empty-containing directories
-for d in `geul-ls -a "$@" | sed '
-    s#/[^/]*$##
-    s#^[^/]*$#.#
-    /^\.$/d
-    ' | sort -u`
-do rmdir -vp "$d" 2>/dev/null || true
-done
+geul-ls -a "$@" |
+sed '
+s#/[^/]*$##
+s#^[^/]*$#.#
+/^\.$/d
+' |
+sort -u |
+{
+    cd "$GEUL_STAGE"
+    while read -r d; do
+        rmdir -vp "$d" 2>/dev/null || true
+    done
+}
