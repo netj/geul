@@ -9,7 +9,7 @@ GEUL_STAGE ?= $(GEUL_DIR)/stage
 
 SHOW_PROGRESS ?= false
 ifeq ($(SHOW_PROGRESS),true)
-    progress=echo $@
+    progress=echo $(@:$(GEUL_STAGE)/%=%)
 else
     progress=
 endif
