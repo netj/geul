@@ -58,29 +58,37 @@ $(GEUL_STAGE)/chrome/%:: $(GEUL_BASE)/publish/chrome/%
 article_xsl:=$(GEUL_BASE)/publish/article.xsl
 # TODO: clean up extension names
 $(GEUL_STAGE)/%.xhtml: $(GEUL_STAGE)/%.xhtml-plain $(GEUL_STAGE)/%.atom $(article_xsl) $(GEUL_DIR)/base-url
+	$(progress)
 	save-output $@ xslt "$(article_xsl)" $< \
 	    --param Id "'$*'" \
 	    $${GEUL_BASEURL:+--param BaseURL "'$$GEUL_BASEURL'"}
 $(GEUL_STAGE)/%.xhtml-plain: $(GEUL_STAGE)/%.xhtml-head $(GEUL_STAGE)/%.geul
+	$(progress)
 	save-output $@ text2xhtml $^
 $(GEUL_STAGE)/%.xhtml-head: $(GEUL_STAGE)/%.meta $(GEUL_STAGE)/%.log
+	$(progress)
 	save-output $@ meta2xhtml-head $* $^
 
-$(GEUL_STAGE)/%.summary: $(GEUL_STAGE)/%.meta $(GEUL_STAGE)/%.geul
-	save-output $@ text2summary $^
-$(GEUL_STAGE)/%.meta: $(GEUL_STAGE)/%.geul $(GEUL_STAGE)/%.log
-	save-output $@ text2meta $* $^
+$(GEUL_STAGE)/%.summary: $(GEUL_STAGE)/%.meta $(GEUL_STAGE)/%.geul  $(GEUL_BASE)/publish/text2summary
+	$(progress)
+	save-output $@ text2summary $(GEUL_STAGE)/$*.meta $(GEUL_STAGE)/$*.geul
+$(GEUL_STAGE)/%.meta: $(GEUL_STAGE)/%.geul $(GEUL_STAGE)/%.log  $(GEUL_BASE)/publish/text2meta
+	$(progress)
+	save-output $@ text2meta $* $(GEUL_STAGE)/$*.geul $(GEUL_STAGE)/$*.log
 $(GEUL_STAGE)/%.log: $(GEUL_STAGE)/%.geul
+	$(progress)
 	-geul-log $< >$@
 #	save-output $@ geul-log $*
 
 # See http://www.gnu.org/software/make/manual/make.html#Multiple-Rules
 # xhtml-based
 $(GEUL_STAGE)/%.summary: $(GEUL_STAGE)/%.meta $(GEUL_STAGE)/%.xhtml
+	$(progress)
 	# TODO
 	echo XXX $@: $^ >&2
 	touch -r $< $@
 $(GEUL_STAGE)/%.meta: $(GEUL_STAGE)/%.xhtml
+	$(progress)
 	# TODO
 	echo XXX $@: $^ >&2
 	touch -r $< $@
@@ -88,6 +96,7 @@ $(GEUL_STAGE)/%.meta: $(GEUL_STAGE)/%.xhtml
 
 ## indexing
 $(GEUL_STAGE)/%.indexed: $(GEUL_STAGE)/%.meta $(GEUL_STAGE)/%.summary
+	$(progress)
 	geul-index add $^
 	touch $@
 
