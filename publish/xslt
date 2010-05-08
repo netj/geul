@@ -8,4 +8,22 @@ xsl=$1; shift
 src=$1; shift
 
 # TODO use saxon for supporting xslt 2.0
-xsltproc --xinclude "$@" "$xsl" "$src"
+#params=()
+#for p; do
+#    params+=("?$p")
+#done
+#exec java -jar "$GEUL_BASE/publish/saxon9he.jar" -xi:on -s "$src" "$xsl" "${params[@]}"
+
+params=()
+for p; do
+    case "$p" in
+        "?"*)
+        p=${p#\?}
+        params+=(--param "${p%%=*}" "${p#*=}")
+        ;;
+        *)
+        params+=(--stringparam "${p%%=*}" "${p#*=}")
+        ;;
+    esac
+done
+xsltproc --novalid --xinclude "${params[@]}" "$xsl" "$src"

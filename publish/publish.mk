@@ -30,6 +30,13 @@ $(GEUL_STAGE)/%: %,v
 	save-output $@ geul-show $*
 
 
+## HTML5 final output
+xhtml2html5xsl := $(GEUL_BASE)/publish/xhtml2html5.xsl
+$(GEUL_STAGE)/%.html: $(GEUL_STAGE)/%.xhtml $(xhtml2html5xsl)
+	$(progress)
+	save-output $@ xslt "$(xhtml2html5xsl)" $<
+
+
 ## chrome
 chromexsl:=$(GEUL_DIR)/chrome.xsl
 ifeq ($(shell test -e "$(chromexsl)" || echo false),)
@@ -42,10 +49,10 @@ else
 	ln -f $< $@
     endef
 endif
-
-$(GEUL_STAGE)/%.html: $(GEUL_STAGE)/%.xhtml $(chromexsl) $(GEUL_STAGE)/%.indexed
+$(GEUL_STAGE)/%.xhtml: $(GEUL_STAGE)/%.xhtml-plain $(chromexsl) $(GEUL_STAGE)/%.indexed
 	$(progress)
-	$(chrome)
+	$(chrome) \
+	    $${GEUL_BASEURL:+\?BaseURL="'$$GEUL_BASEURL'"}
 
 $(GEUL_STAGE)/chrome/%:: $(GEUL_BASE)/publish/chrome/%
 	$(progress)
@@ -57,12 +64,12 @@ $(GEUL_STAGE)/chrome/%:: $(GEUL_BASE)/publish/chrome/%
 # text-based
 article_xsl:=$(GEUL_BASE)/publish/article.xsl
 # TODO: clean up extension names
-$(GEUL_STAGE)/%.xhtml: $(GEUL_STAGE)/%.xhtml-plain $(GEUL_STAGE)/%.atom $(article_xsl) $(GEUL_DIR)/base-url
+$(GEUL_STAGE)/%.xhtml-plain: $(GEUL_STAGE)/%.xhtml-raw $(GEUL_STAGE)/%.atom $(GEUL_DIR)/base-url $(article_xsl)
 	$(progress)
 	save-output $@ xslt "$(article_xsl)" $< \
-	    --param Id "'$*'" \
-	    $${GEUL_BASEURL:+--param BaseURL "'$$GEUL_BASEURL'"}
-$(GEUL_STAGE)/%.xhtml-plain: $(GEUL_STAGE)/%.xhtml-head $(GEUL_STAGE)/%.geul
+	    \?Id="'$*'" \
+	    $${GEUL_BASEURL:+\?BaseURL="'$$GEUL_BASEURL'"}
+$(GEUL_STAGE)/%.xhtml-raw: $(GEUL_STAGE)/%.xhtml-head $(GEUL_STAGE)/%.geul
 	$(progress)
 	save-output $@ text2xhtml $^
 $(GEUL_STAGE)/%.xhtml-head: $(GEUL_STAGE)/%.meta $(GEUL_STAGE)/%.log

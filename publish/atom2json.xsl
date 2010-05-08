@@ -1,7 +1,8 @@
 <?xml version="1.0"?>
 <xsl:stylesheet version="1.0"
     xmlns:atom="http://www.w3.org/2005/Atom"
-    exclude-result-prefixes="atom"
+    xmlns:str="http://exslt.org/strings"
+    exclude-result-prefixes="atom str"
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
     <xsl:output method="text"/>
@@ -37,10 +38,11 @@
     </xsl:template>
 
     <xsl:template name="json-field">
+        <xsl:param name="name"/>
+        <xsl:param name="value"/>
         <xsl:value-of select="$name"/>
         <xsl:text>: '</xsl:text>
-        <!-- TODO escape ' -->
-        <xsl:value-of select="$value"/>
+        <xsl:value-of select="str:replace($value, &quot;'&quot;, &quot;\'&quot;)"/>
         <xsl:text>'</xsl:text>
     </xsl:template>
 

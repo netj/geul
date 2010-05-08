@@ -13,9 +13,6 @@ html {
 body {
     font-family: serif;
 }
-.tools {
-    font-family: sans-serif;
-}
 
 textarea, input {
     font-size: 0.9em;
@@ -78,13 +75,10 @@ h1, h2, h3, h4, h5, h6 {
     line-height: 1.3em;
 }
 #body pre {
-    padding: 0.5em;
     white-space: pre-wrap;
 }
-html>body #body pre {
-    white-space: -moz-pre-wrap;
-}
-#body pre.verbatim {
+#body pre.code {
+    padding: 0.5em;
     border: 2px dotted #999;
     background-color: #ccc;
     white-space: pre;

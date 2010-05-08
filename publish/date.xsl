@@ -12,9 +12,11 @@
     <xsl:import href="xsltsl/date-time.xsl"/>
 
     <xsl:template match="@date | dc:date | @generated | @created">
-        <xsl:apply-templates select="." mode="date"/>
-        <xsl:text> </xsl:text>
-        <xsl:apply-templates select="." mode="time"/>
+        <time datetime="{.}">
+            <xsl:apply-templates select="." mode="date"/>
+            <xsl:text> </xsl:text>
+            <xsl:apply-templates select="." mode="time"/>
+        </time>
     </xsl:template>
 
     <xsl:template match="*|@*" mode="date">
