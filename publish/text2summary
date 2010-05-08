@@ -9,4 +9,7 @@ Meta=$1; shift
 Text=$1; shift
 
 # TODO make use of $Meta
-tl <"$Text" | sed -n '1,/^$/ p'
+# TODO if text is very short, use all
+# TODO if first block is too short, use at least some number of lines
+tl <"$Text" | sed -n '1,/^$/ p' |
+sed 's/<.*>//g; # XXX an ad-hoc hack to make XML well-formed anyway'
