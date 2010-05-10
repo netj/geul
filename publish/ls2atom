@@ -34,7 +34,7 @@ echo '<feed xmlns="http://www.w3.org/2005/Atom" xmlns:geul="http://netj.org/2009
 # TODO implement this in Perl to speed up
 # how to emit an ATOM entry
 generate-atom-entry() {
-    eval `parse-meta Title Created Summary`
+    eval "`parse-meta Title Created Summary`"
     echo '<entry>'
     printf '<link rel="alternative" href="%s"/>' "`xml-escape "$id"`"
     printf '<title type="text">%s</title>' "`xml-escape "$title"`"

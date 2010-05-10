@@ -30,7 +30,7 @@ case "$Command" in
     Meta=$1; shift
     Summary=$1; shift
     # add/update list
-    eval `parse-meta Id Title Created <"$Meta"`
+    eval "`parse-meta Id Title Created <"$Meta"`"
     id=${id//\'/\'\'}
     title=${title//\'/\'\'}
     created=${created//\'/\'\'}
