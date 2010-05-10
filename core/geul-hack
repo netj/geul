@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+# geul-hack -- run an internal command of Geul
+#
+# Author: Jaeho Shin <netj@sparcs.org>
+# Created: 2010-05-10
+set -e
+. "$GEUL.sh"
+
+exec "$@"
