@@ -8,13 +8,13 @@
 
     <xsl:template match="atom:feed">
         <div class="atom-feed">
-            <xsl:apply-templates/>
+            <xsl:apply-templates select="atom:entry"/>
         </div>
     </xsl:template>
 
     <xsl:template match="atom:entry">
         <div class="atom-entry">
-            <xsl:variable name="link" select="atom:link[@rel='alternative']"/>
+            <xsl:variable name="link" select="atom:link[@rel='alternative' or not(@rel)]"/>
             <!-- title and published -->
             <h2 class="atom-title"><xsl:choose>
                     <xsl:when test="$link">

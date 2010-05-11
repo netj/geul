@@ -9,6 +9,8 @@ set -e
 Path=$1; shift
 Meta=$1; shift
 
+BASE_URL=`cat "$GEUL_DIR/base-url"`
+
 xml-escape() {
     x=$1
     x=${x//&/&amp;}
@@ -18,27 +20,45 @@ xml-escape() {
     echo -n "$x"
 }
 
-echo '<feed xmlns="http://www.w3.org/2005/Atom" xmlns:geul="http://netj.org/2009/geul">'
-# TODO title
+echo '<?xml version="1.0" encoding="utf-8"?>'
+echo '<feed xmlns="http://www.w3.org/2005/Atom">'
+(
+eval "`
+geul-index meta Title Summary <<<"$Path" | tail -n +2 |
+parse-meta title
+`"
+# title
+printf '<title type="text">%s</title>' "`xml-escape "$title"`"
+echo
 # TODO subtitle?
 # TODO author+
-# TODO id
-# TODO link+
+# id
+printf '<id>%s</id>' "`xml-escape "$BASE_URL$id"`"
+echo
+# link+
+printf '<link rel="self" href="%s"/>' "`xml-escape "$BASE_URL$id.atom"`"
+echo
+printf '<link href="%s"/>' "`xml-escape "$BASE_URL${id%index}"`"
+echo
 # TODO icon?
 # TODO logo?
 # TODO rights?
-# TODO updated
+# updated
+printf '<updated>%s</updated>' "`date +%FT%T%:z`"
+echo
 # TODO generator
-
+echo
+)
 
 # TODO implement this in Perl to speed up
 # how to emit an ATOM entry
 generate-atom-entry() {
-    eval "`parse-meta Title Created Summary`"
+    eval "`parse-meta title created summary`"
     echo '<entry>'
-    printf '<link rel="alternative" href="%s"/>' "`xml-escape "$id"`"
     printf '<title type="text">%s</title>' "`xml-escape "$title"`"
+    printf '<link href="%s"/>' "`xml-escape "$BASE_URL${id%index}"`"
     printf '<published>%s</published>' "`xml-escape "$created"`"
+    printf '<id>%s</id>' "`xml-escape "$BASE_URL$id"`"
     # TODO translate more tags
     echo '<summary type="xhtml">'
     echo '<div xmlns="http://www.w3.org/1999/xhtml">'
