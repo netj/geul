@@ -20,6 +20,8 @@ textarea, input {
 
 pre, tt, textarea, input {
     font-family: monospace;
+}
+pre, tt {
     overflow: auto;
 }
 
