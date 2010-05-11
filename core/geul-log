@@ -8,63 +8,75 @@ set -e
 
 Path=$1; shift
 
-id=`geul-path-parse "$Path"`
-nrrevs=$((
-`git log --format=format: -- "$GEUL_ROOT/$id" | wc -l`
-+
-`hd <"$GEUL_ROOT/$id" | grep -c "^Revision-.*:"`
-))
+if ! [ -e "$Path" ]; then
+    error "$Path: No such resouce"
+    exit 2
+fi
 
-# TODO sort these by date
-{
-    # fetch revisions from git
-    git log --format=format:"Revision %nDate: %ad%nAuthor: %aN%n%n%s%n" \
-        --date=iso -- "$GEUL_ROOT/$id"
-    # old revisions recorded in header
-    hd <"$GEUL_ROOT/$id" | awk '
+if [ -d "$GEUL_ROOT"/.git ]; then
+    # fetch history from Git
+    nrrevs=$((
+    `git log --format=format: -- "$Path" | wc -l`
+    +
+    `hd <"$Path" | grep -c "^Revision-.*:" || true`
+    ))
+    # TODO sort these by date
+    {
+        # fetch revisions from git
+        git log --format=format:"Revision %nDate: %ad%nAuthor: %aN%n%n%s%n" \
+            --date=iso -- "$Path"
+        # old revisions recorded in header
+        hd <"$Path" | awk '
+        BEGIN {
+            inRev=0
+        }
+        /^[^ ]+:/ {
+            if (inRev) { print "" }
+            inRev=0
+        }
+        /^Revision-.*:/ {
+            sub(/^Revision-/, "")
+            sub(/:.*$/, "")
+            print "Revision " $0
+            inRev=1
+            next
+        }
+        inRev && /^  */ {
+            sub(/^  */, "")
+            print $0
+            next
+        }
+        END {
+            if (inRev) { print "" }
+        }
+        '
+    } |
+    awk '
     BEGIN {
-        inRev=0
+        rev=0
     }
-    /^[^ ]+:/ {
-        if (inRev) { print "" }
-        inRev=0
-    }
-    /^Revision-.*:/ {
-        sub(/^Revision-/, "")
-        sub(/:.*$/, "")
-        print "Revision " $0
-        inRev=1
+
+    /^Revision $/ {
+        print $0 ('$nrrevs'-rev+1)
+        rev++
         next
     }
-    inRev && /^  */ {
-        sub(/^  */, "")
+
+    /^Date: [^ ]* [^ ]* [^ ]*/ {
+        tz=$4
+        # FIXME sanitize timezone part (+0900 -> +09:00, Z -> Z)
+        print $1 " " $2 "T" $3 tz
+        next
+    }
+
+    {
         print $0
-        next
-    }
-    END {
-        if (inRev) { print "" }
     }
     '
-} |
-awk '
-BEGIN {
-    rev=0
-}
-
-/^Revision $/ {
-    print $0 ('$nrrevs'-rev+1)
-    rev++
-    next
-}
-
-/^Date: [^ ]* [^ ]* [^ ]*/ {
-    tz=$4
-    # FIXME sanitize timezone part (+0900 -> +09:00, Z -> Z)
-    print $1 " " $2 "T" $3 tz
-    next
-}
-
-{
-    print $0
-}
-'
+else
+    # fallback to filesystem information
+    echo Revision 1
+    date -r "$Path" +"Date: %FT%T%:z"
+    echo
+    echo
+fi
