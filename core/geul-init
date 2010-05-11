@@ -21,6 +21,8 @@ GEUL_DIR="$GEUL_ROOT/.geul"
 # create a repository
 mkdir -p "$GEUL_DIR"
 cd "$GEUL_DIR"
-echo 1 >format
-touch base-url
-mkdir -p stage chrome
+mkdir -p stage index
+template="$GEUL_BASE/core/geul-init.d"
+for f in format base-url ignore
+do cp -f "$template/$f" .
+done
