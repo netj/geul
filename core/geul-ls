@@ -47,10 +47,10 @@ for Path; do
     p=${p#$GEUL_ROOT}
     p=${p#/}
     p=${p%/}
-    if [ -d "$Path" ]; then
-        p="$p/"
-    fi
     if [ -n "$p" ]; then
+        if [ -d "$Path" ]; then
+            p="$p/"
+        fi
         p="$p*"
         pathq+=(${pathq:+-o} -ipath "$p")
     fi
