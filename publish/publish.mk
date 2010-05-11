@@ -38,7 +38,8 @@ $(GEUL_STAGE)/%.html: $(GEUL_STAGE)/%.xhtml $(xhtml2html5xsl)
 chromexsl:=$(GEUL_DIR)/chrome.xsl
 ifeq ($(shell test -e "$(chromexsl)" || echo false),)
     define chrome
-	save-output $@ xslt "$(chromexsl)" $<
+	save-output $@ xslt "$(chromexsl)" $< \
+	    $${GEUL_BASEURL:+\?BaseURL="'$$GEUL_BASEURL'"}
     endef
 else
     chromexsl:=
@@ -48,8 +49,7 @@ else
 endif
 $(GEUL_STAGE)/%.xhtml: $(GEUL_STAGE)/%.xhtml-plain $(chromexsl) $(GEUL_STAGE)/%.indexed
 	$(progress)
-	$(chrome) \
-	    $${GEUL_BASEURL:+\?BaseURL="'$$GEUL_BASEURL'"}
+	$(chrome)
 
 $(GEUL_STAGE)/chrome/%:: $(GEUL_BASE)/publish/chrome/%
 	$(progress)
