@@ -39,7 +39,7 @@ chromexsl:=$(GEUL_DIR)/chrome.xsl
 ifeq ($(shell test -e "$(chromexsl)" || echo false),)
     define chrome
 	save-output $@ xslt "$(chromexsl)" $< \
-	    $${GEUL_BASEURL:+\?BaseURL="'$$GEUL_BASEURL'"}
+	    $${GEUL_BASEURL:+BaseURL="$$GEUL_BASEURL"}
     endef
 else
     chromexsl:=
@@ -64,8 +64,8 @@ article_xsl:=$(GEUL_BASE)/publish/article.xsl
 $(GEUL_STAGE)/%.xhtml-plain: $(GEUL_STAGE)/%.xhtml-raw $(GEUL_STAGE)/%.atom $(GEUL_DIR)/base-url $(article_xsl)
 	$(progress)
 	save-output $@ xslt "$(article_xsl)" $< \
-	    \?Id="'$*'" \
-	    $${GEUL_BASEURL:+\?BaseURL="'$$GEUL_BASEURL'"}
+	    Id="$*" \
+	    $${GEUL_BASEURL:+BaseURL="$$GEUL_BASEURL"}
 $(GEUL_STAGE)/%.xhtml-raw: $(GEUL_STAGE)/%.xhtml-head $(GEUL_STAGE)/%.geul
 	$(progress)
 	save-output $@ text2xhtml $^
