@@ -42,12 +42,16 @@ perl -Mutf8 -Mstrict -e '
     sub parse_head {
         my $fh = shift;
         my %hd;
+        my $last;
         while (my $line = <$fh>) {
             utf8::decode($line);
             last if $line =~ /^\s*$/;
             chomp $line;
-            if ($line =~ /^([^:]+)\s*:\s*(.*)$/) {
+            if (defined $last and $line =~ /^\s+(.+)$/) {
+                $hd{$last} .= "\n\t" . $1;
+            } elsif ($line =~ /^([^:]+)\s*:\s*(.*)$/) {
                 $hd{$1} = $2;
+                $last = $1;
             }
         }
         \%hd
