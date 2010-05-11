@@ -13,7 +13,7 @@ if ! [ -e "$Path" ]; then
     exit 2
 fi
 
-if [ -d "$GEUL_ROOT"/.git ]; then
+if git tag &>/dev/null; then
     # fetch history from Git
     nrrevs=$((
     `git log --format=format: -- "$Path" | wc -l`
