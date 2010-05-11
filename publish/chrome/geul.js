@@ -6,7 +6,6 @@
 
 var BaseURI = document.baseURI || /* for IE */ document.getElementsByTagName("base").item(0).href;
 var PermaLink;
-var GeulID;
 
 var NextGeul;
 var CurrentGeul;
@@ -42,14 +41,14 @@ function getGeulIndexFor(indexId, asyncTask) {
 
 function getNeighborArticlesFor(asyncTask) {
     PermaLink = document.getElementsByName("PermaLink")[0].content;
-    GeulID = PermaLink.substring(BaseURI.length);
-    var indexId = parseInt(GeulID.replace(/\/.*$/, ''));
+    var geulId = PermaLink.substring(BaseURI.length);
+    var indexId = parseInt(geulId.replace(/\/.*$/, ''));
     if (isNaN(indexId))
         return;
     getGeulIndexFor(indexId, function(index) {
             // index is ordered reverse chronologically
             for (var i=0; i<index.length; i++) {
-                if (index[i].id == GeulID) {
+                if (index[i].id == PermaLink) {
                     CurrentGeul = index[i];
                     if (i > 0)
                         NextGeul = index[i-1];

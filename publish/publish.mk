@@ -113,7 +113,7 @@ $(GEUL_STAGE)/%.atom: $(GEUL_STAGE)/%.meta
 	fi
 
 atom2json_xsl:=$(GEUL_BASE)/publish/atom2json.xsl
-$(GEUL_STAGE)/%.json: $(GEUL_STAGE)/%.atom
+$(GEUL_STAGE)/%.json: $(GEUL_STAGE)/%.atom $(atom2json_xsl)
 	$(progress)
 	save-output $@ xslt "$(atom2json_xsl)" $<
 

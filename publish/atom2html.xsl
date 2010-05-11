@@ -14,7 +14,7 @@
 
     <xsl:template match="atom:entry">
         <div class="atom-entry">
-            <xsl:variable name="link" select="atom:link[@rel='alternative' or not(@rel)]"/>
+            <xsl:variable name="link" select="atom:link[@rel='alternative' or not(@rel)][1]"/>
             <!-- title and published -->
             <h2 class="atom-title"><xsl:choose>
                     <xsl:when test="$link">

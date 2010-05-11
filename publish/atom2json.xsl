@@ -17,7 +17,7 @@
         <xsl:text>{&#10;</xsl:text>
         <xsl:call-template name="json-field">
             <xsl:with-param name="name" select="'id'"/>
-            <xsl:with-param name="value" select="atom:link[@rel='alternative']/@href"/>
+            <xsl:with-param name="value" select="atom:link[@rel='alternative' or not(@rel)][1]/@href"/>
         </xsl:call-template>
         <xsl:text>,&#10;</xsl:text>
         <xsl:call-template name="json-field">
