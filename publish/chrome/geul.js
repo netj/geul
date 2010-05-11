@@ -11,6 +11,7 @@ var NextGeul;
 var CurrentGeul;
 var PreviousGeul;
 
+var AtomNS = "http://www.w3.org/2005/Atom";
 function getGeulIndexFor(indexId, asyncTask) {
     var xmlhttp;
     if (window.XMLHttpRequest) {
@@ -26,15 +27,30 @@ function getGeulIndexFor(indexId, asyncTask) {
         if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
             var index;
             try {
-                index = eval(xmlhttp.responseText);
+                var entry = xmlhttp.responseXML.getElementsByTagName("entry");
+                index = [];
+                for (var i=0; i<entry.length; i++) {
+                    var o = {};
+                    function firstNodeValue(name) {
+                        try {
+                            return entry[i].getElementsByTagName(name)[0].firstChild.nodeValue;
+                        } catch (e) {
+                        }
+                        return null;
+                    }
+                    o.id        = firstNodeValue(       "id");
+                    o.title     = firstNodeValue(    "title");
+                    o.published = firstNodeValue("published");
+                    index.push(o);
+                }
             } catch (e) {
-                //alert(e.name + ": " + e.message);
+                console.log(e.name + ": " + e.message);
                 return;
             }
             asyncTask(index);
         }
     }
-    var indexUrl = BaseURI + indexId + "/index.json";
+    var indexUrl = BaseURI + indexId + "/index.atom";
     xmlhttp.open("GET", indexUrl, true);
     xmlhttp.send(null);
 }
