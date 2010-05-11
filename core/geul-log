@@ -24,7 +24,7 @@ if git tag &>/dev/null; then
     {
         # fetch revisions from git
         git log --format=format:"Revision %nDate: %ad%nAuthor: %aN%n%n%s%n" \
-            --date=iso -- "$Path"
+            --date=iso --follow -- "$Path"
         # old revisions recorded in header
         hd <"$Path" | awk '
         BEGIN {
