@@ -34,9 +34,6 @@ if $ListStaged; then
     Root="$GEUL_STAGE"
 else
     Root="$GEUL_ROOT"
-    for s in "${Suffices[@]}"
-    do Suffices+=("$s,v")
-    done
 fi
 
 # path query
@@ -85,9 +82,6 @@ remove_suffices() {
     local patts=`tr ' ' '|' <<<"${Suffices[*]}" | sed 's/\.\||/\\\\&/g'`
     sed "s/\($patts\)$//;"
 }
-remove_rcs_suffix() {
-    sed "s:,v$::"
-}
 
 # pretty printing
 polish() {
@@ -118,7 +112,6 @@ process() {
         cmd+=(\| remove_ignored)
     fi
     ! $ListId || cmd+=(\| remove_suffices)
-    cmd+=(\| remove_rcs_suffix)
     cmd+=(\| polish)
     eval "${cmd[@]}"
 }

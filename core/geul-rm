@@ -7,35 +7,14 @@ set -e
 . "$GEUL.sh"
 . "$GEUL.running-inside-a-repo"
 
-remove() {
-    local endofopt=false
-    local a= args=
-    args=(-v)
-    for a; do
-        if ! $endofopt; then
-            case "$a" in
-                --) endofopt=true; continue ;;
-                -*) args+=("$a") ; continue ;;
-            esac
-        fi
-        args+=("$a")
-        # check validity of path
-        geul-path-parse "$a" >/dev/null
-        # remove archive too if exists
-        local v="$a,v"
-        [ -f "$v" ] && args+=("$v")
-    done
-    rm "${args[@]}"
-}
-
 run-extensions before-geul-rm "$@"
 cd "$GEUL_ROOT"
 if [ -d "${GEUL_PATH:-.}" ]; then
     cd "${GEUL_PATH:-.}"
-    remove "$@"
+    rm "$@"
 else
     mkdir -p "$GEUL_PATH"
     cd "$GEUL_PATH"
-    remove "$@"
+    rm "$@"
     rmdir -p "$GEUL_PATH"
 fi
