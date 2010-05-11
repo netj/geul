@@ -9,46 +9,62 @@ set -e
 Path=$1; shift
 
 id=`geul-path-parse "$Path"`
-rcsv="$GEUL_ROOT/$id,v"
-tz=Z # `date +%:z` # FIXME adjust datetime to local timezone
+nrrevs=$((
+`git log --format=format: -- "$GEUL_ROOT/$id" | wc -l`
++
+`hd <"$GEUL_ROOT/$id" | grep -c "^Revision-.*:"`
+))
 
-# retreive info from RCS log
-[ -f "$rcsv" ] &&
-rlog "${@/#/-r1.}" "$rcsv" |
-awk '
-    /^revision 1./ { r=1 }
-    /^-{28}$/ { e=1 }
-    /^={77}$/ { e=1 }
-    r { print }
-    e { e=0; r=0 }
-' |
-awk '
-    /^revision / { gsub(/revision 1\./, "Number: ") }
-    /^date: / { gsub(/;.*/, ""); gsub(/^date:/, "Date:") }
-    /^by / { gsub(/^by /, "Author: ") }
-    /^from / { gsub(/^from /, "Location: ") }
-    { print }
-' |
-perl -Mstrict -e '
-    until (eof()) {
-        my %attrs;
-        my $message = "";
-        while (my $line = <>) {
-            chomp $line;
-            if ($line =~ /^([^:]+): (.*)$/) {
-                $attrs{$1} = $2;
-            } elsif ($line =~ /^(={77}|-{28}$)$/) {
-                last;
-            } else {
-                $message .= $line
-            }
-        }
-        $attrs{Date} =~ s#/#-#g;
-        $attrs{Date} =~ s# #T#;
-        $attrs{Date} .= "'$tz'" ;# if $attrs{Date} =~ /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}$/;
-        print "Revision $attrs{Number}\n";
-        delete $attrs{Number};
-        print "$_: $attrs{$_}\n" foreach keys %attrs;
-        print "\n$message\n\n";
+# TODO sort these by date
+{
+    # fetch revisions from git
+    git log --format=format:"Revision %nDate: %ad%nAuthor: %aN%n%n%s%n" \
+        --date=iso -- "$GEUL_ROOT/$id"
+    # old revisions recorded in header
+    hd <"$GEUL_ROOT/$id" | awk '
+    BEGIN {
+        inRev=0
     }
+    /^[^ ]+:/ {
+        if (inRev) { print "" }
+        inRev=0
+    }
+    /^Revision-.*:/ {
+        sub(/^Revision-/, "")
+        sub(/:.*$/, "")
+        print "Revision " $0
+        inRev=1
+        next
+    }
+    inRev && /^  */ {
+        sub(/^  */, "")
+        print $0
+        next
+    }
+    END {
+        if (inRev) { print "" }
+    }
+    '
+} |
+awk '
+BEGIN {
+    rev=0
+}
+
+/^Revision $/ {
+    print $0 ('$nrrevs'-rev+1)
+    rev++
+    next
+}
+
+/^Date: [^ ]* [^ ]* [^ ]*/ {
+    tz=$4
+    # FIXME sanitize timezone part (+0900 -> +09:00, Z -> Z)
+    print $1 " " $2 "T" $3 tz
+    next
+}
+
+{
+    print $0
+}
 '

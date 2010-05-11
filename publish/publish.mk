@@ -25,9 +25,6 @@ $(GEUL_STAGE)/%: %
 	$(progress)
 	mkdir -p $(@D)
 	install -m a+r-w $< $@
-$(GEUL_STAGE)/%: %,v
-	$(progress)
-	save-output $@ geul-show $*
 
 
 ## HTML5 final output
