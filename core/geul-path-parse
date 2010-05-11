@@ -16,6 +16,9 @@ invalid-path() {
     false
 }
 
+GEUL_STAGE=`readlink -f "$GEUL_STAGE"`
+GEUL_ROOT=`readlink -f "$GEUL_ROOT"`
+GEUL_DIR=`readlink -f "$GEUL_DIR"`
 id=`readlink -f "$Path" || echo "$PWD/$Path"`
 case "$id" in
     "$GEUL_STAGE"*) id=${id#$GEUL_STAGE} ;;

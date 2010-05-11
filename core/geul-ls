@@ -37,18 +37,23 @@ else
 fi
 
 # path query
+GEUL_ROOT=`readlink -f "$GEUL_ROOT"`
 pathq=()
 if [ $# -eq 0 ]; then
     set -- "."
 fi
 for Path; do
-    Path=`readlink -f "$Path" || echo "$Path"`
-    Path=${Path#$GEUL_ROOT}
-    Path=${Path#/}
-    Path=${Path%/}
-    p="$Path"
-    p="$p*"
-    pathq+=(${pathq:+-o} -ipath "$p")
+    p=`readlink -f "$Path" || echo "$Path"`
+    p=${p#$GEUL_ROOT}
+    p=${p#/}
+    p=${p%/}
+    if [ -d "$Path" ]; then
+        p="$p/"
+    fi
+    if [ -n "$p" ]; then
+        p="$p*"
+        pathq+=(${pathq:+-o} -ipath "$p")
+    fi
 done
 [ ${#pathq[@]} = 0 ] || pathq=(\( "${pathq[@]}" \))
 
@@ -88,17 +93,19 @@ polish() {
     remove_redundancies() {
         awk '!a[$0]++'
     }
-    make_relative_to_stage() {
+    make_relative_to_root() {
         sed "s:^$GEUL_ROOT/::"
     }
     make_relative_to_pwd() {
-        # FIXME: use ../
-        sed "s:^${GEUL_PATH:+$GEUL_PATH/}::"
+        sed "
+        \:^$GEUL_PATH/: ! s:^:`sed 's:[^/]*/:../:g' <<<"$GEUL_PATH/"`:
+        s:^$GEUL_PATH/::
+        "
     }
     local cmd
     cmd=(remove_redundancies)
-    cmd+=(\| make_relative_to_stage)
-    cmd+=(\| make_relative_to_pwd)
+    cmd+=(\| make_relative_to_root)
+    [ -z "$GEUL_PATH" ] || cmd+=(\| make_relative_to_pwd)
     if [ -t 1 ]; then
         cmd+=(\| column)
     fi
