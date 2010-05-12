@@ -58,7 +58,7 @@ BEGIN {
 }
 r && /^Revision / { msg=0; print "</geul:revision>" }
 /^Revision / { r=$2; print "<geul:revision number=\"" r "\"" }
-r && msg { print }
+r && msg { gsub(/&/, "\\&amp;"); gsub(/</, "\\&lt;"); print }
 r && !msg && /^Date: / { print " date=\"" $2 "\"" }
 r && !msg && /^$/ { msg=1; printf ">" }
 END {
