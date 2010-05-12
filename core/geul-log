@@ -13,18 +13,19 @@ if ! [ -e "$Path" ]; then
     exit 2
 fi
 
+relpath=`geul-path-parse "$Path"`
+
 if git tag &>/dev/null; then
     # fetch history from Git
-    nrrevs=$((
-    `git log --format=format: -- "$Path" | wc -l`
-    +
-    `hd <"$Path" | grep -c "^Revision-.*:" || true`
+    nrrevs=$(( 1
+    + `git log --format=format: --follow -- "$GEUL_ROOT/$relpath" | wc -l`
+    + `hd <"$Path" | grep -c "^Revision-.*:" || true`
     ))
     # TODO sort these by date
     {
         # fetch revisions from git
         git log --format=format:"Revision %nDate: %ad%nAuthor: %aN%n%n%s%n" \
-            --date=iso --follow -- "$Path"
+            --date=iso --follow -- "$GEUL_ROOT/$relpath"
         # old revisions recorded in header
         hd <"$Path" | awk '
         BEGIN {
@@ -57,7 +58,7 @@ if git tag &>/dev/null; then
     }
 
     /^Revision $/ {
-        print $0 ('$nrrevs'-rev+1)
+        print $0 ('$nrrevs'-rev)
         rev++
         next
     }

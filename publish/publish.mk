@@ -81,8 +81,7 @@ $(GEUL_STAGE)/%.meta: $(GEUL_STAGE)/%.geul $(GEUL_STAGE)/%.log  $(GEUL_BASE)/pub
 	save-output $@ text2meta $* $(GEUL_STAGE)/$*.geul $(GEUL_STAGE)/$*.log
 $(GEUL_STAGE)/%.log: $(GEUL_STAGE)/%.geul
 	$(progress)
-	-geul-log $< >$@
-#	save-output $@ geul-log $*
+	save-output $@ geul-log $*.geul
 
 # See http://www.gnu.org/software/make/manual/make.html#Multiple-Rules
 # xhtml-based
