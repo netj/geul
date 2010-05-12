@@ -14,26 +14,54 @@ var PreviousGeul;
 var AtomNS = "http://www.w3.org/2005/Atom";
 function getGeulIndexFor(indexId, asyncTask) {
     var xmlhttp;
-    if (window.XMLHttpRequest) {
-        // code for IE7+, Firefox, Chrome, Opera, Safari
-        xmlhttp = new XMLHttpRequest();
-    } else if (window.ActiveXObject) {
-        // code for IE6, IE5
-        xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
-    } else {
-        alert("Your browser does not support XMLHTTP!");
+    // branch for native XMLHttpRequest object
+    if(window.XMLHttpRequest && !(window.ActiveXObject)) {
+        try {
+            xmlhttp = new XMLHttpRequest();
+        } catch(e) {
+            xmlhttp = null;
+        }
+        // branch for IE/Windows ActiveX version
+    } else if(window.ActiveXObject) {
+        try {
+            xmlhttp = new ActiveXObject("Msxml2.XMLHTTP");
+        } catch(e) {
+            try {
+                xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+            } catch(e) {
+                xmlhttp = null;
+            }
+        }
+    }
+    if (! xmlhttp) {
+        alert("Your browser does not support Ajax!");
+        return;
     }
     xmlhttp.onreadystatechange = function() {
         if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
             var index;
             try {
-                var entry = xmlhttp.responseXML.getElementsByTagName("entry");
+                var atom;
+                if (window.ActiveXObject) { 
+                    // Hack for IE
+                    // See: http://groups.google.com/group/rubyonrails-spinoffs/browse_thread/thread/621a6ddf13252b93?pli=1
+                    var atom = new ActiveXObject("Msxml2.DOMDocument"); 
+                    atom.loadXML(xmlhttp.responseText); 
+                } else {
+                    atom = xmlhttp.responseXML;
+                }
+                var entry = atom.getElementsByTagName("entry");
                 index = [];
                 for (var i=0; i<entry.length; i++) {
                     var o = {};
                     function firstNodeValue(name) {
                         try {
-                            return entry[i].getElementsByTagName(name)[0].firstChild.nodeValue;
+                            var e;
+                            if (window.ActiveXObject)
+                                e = entry.item(i);
+                            else
+                                e = entry[i];
+                            return e.getElementsByTagName(name)[0].firstChild.nodeValue;
                         } catch (e) {
                         }
                         return null;
@@ -44,7 +72,7 @@ function getGeulIndexFor(indexId, asyncTask) {
                     index.push(o);
                 }
             } catch (e) {
-                console.log(e.name + ": " + e.message);
+                // console.log(e.name + ": " + e.message);
                 return;
             }
             asyncTask(index);
