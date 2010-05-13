@@ -15,5 +15,5 @@ list-feed-ids() {
 
 # publish ATOM and JSON forms of feeds
 list-feed-ids "$@" |
-sed -n 's/$/.atom/p; s/.atom$/.json/p;' |
+sed 's/$/.atom/' |
 xargs geul-republish
