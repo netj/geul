@@ -121,8 +121,11 @@ tag=of Geul Configuration
 begin=^\# Begin $(tag)$
 end=^\# End $(tag)$
 .PHONY: $(GEUL_STAGE)/.htaccess
-$(GEUL_STAGE)/.htaccess:
+$(GEUL_STAGE)/.htaccess: .htaccess
 	f="$(GEUL_BASE)/publish/htaccess"; \
+	if [ -e $< ]; then \
+	    cp -f $< $@; \
+	fi; \
 	if [ -e $@ ]; then \
 	    s1=`sed -n "/$(begin)/,/$(end)/p" <$@ | md5sum`; \
 	    s2=`md5sum <"$$f"`; \

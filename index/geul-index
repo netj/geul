@@ -69,7 +69,7 @@ case "$Command" in
         Patt=${Patt//\?/_}
         Patt=${Patt//\*/%}
         Patt=${Patt//\'/\'\'}
-        filter="${filter:+$filter OR }id LIKE '$Patt%'"
+        filter="${filter:+$filter OR }id LIKE '$Patt'"
     done
     run-sql-on-list-db "
         SELECT id FROM Articles
