@@ -38,6 +38,7 @@ case "$feedmethod" in
     links-*) geul-links ${feedmethod#links-} "$feedtarget" ;;
     list)    geul-index ls "$feedtarget" ;;
 esac |
+geul-index filter "!Status:draft" |
 if [ -n "$feedsize" ]
 then head -n $feedsize
 else cat

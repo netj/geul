@@ -43,7 +43,7 @@ case "$Command" in
     "
     # add/update metadata
     {
-        echo "^$id "
+        echo "^$id " # XXX watch out for the trailing space!
         cat "$Meta"
         echo -n "Summary:"; sed 's/^/ /' <"$Summary"
     } | map "$IDX/meta.db" >/dev/null
@@ -78,9 +78,14 @@ case "$Command" in
     "
     ;;
 
+    filter)
+    exec filter-meta "$@"
+    ;;
+
     meta)
+    # TODO Maybe sed is more suited for this task?
     while IFS= read -r id; do
-        echo "^$id "
+        echo "^$id " # XXX watch out for the trailing space!
         for name; do echo "$name"; done
         echo
     done |

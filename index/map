@@ -32,8 +32,10 @@ Usage: map DATABASE
 }
 
 our %Map;
-our $MapPath = shift @ARGV;
-tie %Map, 'DB_File', $MapPath || die "A valid map path must be given";
+our $MapPath = shift @ARGV
+    or die "A valid map path must be given";
+tie %Map, 'DB_File', $MapPath
+    or die "Cannot open database at $MapPath";
 
 my $prefix = "";
 my $keyToPut = undef;
@@ -44,7 +46,7 @@ while (defined (my $l = <>)) {
         if ($l =~ /^\s+(.+)$/) {
             # continued value lines are prefixed with whitespaces
             $valueToPut .= "\n".$1;
-            print $l, "\n";
+            print $l . "\n";
             next;
         } else {
             # otherwise, end of value
@@ -58,22 +60,22 @@ while (defined (my $l = <>)) {
         # KEY: VALUE
         $keyToPut = $prefix.$1;
         $valueToPut = $2;
-        print $l, "\n";
+        print $l . "\n";
     } elsif ($l =~ /^\^\s*(.*)$/) {
         # prefix
         # ^PREFIX
         $prefix = $1;
-        print $l, "\n";
+        print $l . "\n";
     } elsif ($l =~ /^-\s*(.*)$/) {
         # remove
         # -KEY
         my $k = $prefix.$1;
         delete $Map{$k};
-        print $l, "\n";
+        print $l . "\n";
     } elsif ($l =~ /^\s*$/) {
         # empty line
         # 
-        print $l, "\n";
+        print $l . "\n";
     } else {
         # get
         # KEY
