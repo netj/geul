@@ -120,24 +120,15 @@ $(GEUL_STAGE)/%.json: $(GEUL_STAGE)/%.atom $(atom2json_xsl)
 tag=of Geul Configuration
 begin=^\# Begin $(tag)$
 end=^\# End $(tag)$
-.PHONY: $(GEUL_STAGE)/.htaccess
-$(GEUL_STAGE)/.htaccess: .htaccess
-	f="$(GEUL_BASE)/publish/htaccess"; \
-	if [ -e $< ]; then \
-	    cp -f $< $@; \
-	fi; \
-	if [ -e $@ ]; then \
-	    s1=`sed -n "/$(begin)/,/$(end)/p" <$@ | md5sum`; \
-	    s2=`md5sum <"$$f"`; \
-	    if [ x"$$s1" != x"$$s2" ]; then \
-		$(progress); \
-		screen -Dm vim -n $@ \
-		+"/$(begin)" \
-		+"norm V/$(end)s" \
-		+"r $$f" +"norm -dd" \
-		+wq; \
-	    fi; \
-	else \
-	    $(progress); \
-	    cat "$$f" >>$@; \
-	fi
+$(GEUL_STAGE)/.htaccess:: $(GEUL_BASE)/publish/htaccess
+	$(progress); \
+	cat "$<" >>$@;
+$(GEUL_STAGE)/.htaccess:: $(GEUL_BASE)/publish/htaccess .htaccess
+	$(progress); \
+	cp -f .htaccess $@; \
+	screen -Dm vim -n $@ \
+	+ \
+	+"?$(begin)" \
+	+"norm V/$(end)s" \
+	+"r $<" +"norm -dd" \
+	+wq; \
