@@ -92,17 +92,6 @@ h1, h2, h3, h4, h5, h6 {
 #body table td, #body table th {
     margin: 0.5em;
 }
-#body table tbody {
-    background-color: #ccc;
-}
-#body table thead {
-    background-color: #444;
-    border-color: #444;
-    color: #ccc;
-}
-#body table thead th {
-    border-color: #444;
-}
 #body img {
     max-width: 100%;
 }
