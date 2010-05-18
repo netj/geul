@@ -16,14 +16,14 @@
         <div class="atom-entry">
             <xsl:variable name="link" select="atom:link[@rel='alternative' or not(@rel)][1]"/>
             <!-- title and published -->
-            <h2 class="atom-title"><xsl:choose>
+            <h1 class="atom-title"><xsl:choose>
                     <xsl:when test="$link">
                         <a href="{$link/@href}"><xsl:value-of select="atom:title"/></a>
                     </xsl:when>
                     <xsl:otherwise>
                         <xsl:value-of select="atom:title"/>
                     </xsl:otherwise>
-            </xsl:choose></h2>
+            </xsl:choose></h1>
             <div class="atom-published">
                 <xsl:if test="not(atom:published)">
                     <xsl:comment>not available</xsl:comment>

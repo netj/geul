@@ -63,10 +63,10 @@ h1, h2, h3, h4, h5, h6 {
     font-family: sans-serif;
 }
 
-#body h2, #body h3, #body h4, #body h5, #body h6 {
+#body h1, #body h2, #body h3, #body h4, #body h5, #body h6 {
     clear: both;
 }
-#body h2 {
+#body h1 {
     border-bottom: 1px solid #ddd;
 }
 
