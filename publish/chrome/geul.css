@@ -107,40 +107,12 @@ h1, h2, h3, h4, h5, h6 {
     max-width: 100%;
 }
 
-.warning {
-    background-color: #f42;
-    color: #ffe;
-    text-align: center;
-    padding: 0.5em;
-}
-
-#actions {
-    font-size: 0.8em;
-}
-@media print {
-    #actions {
-        display: none;
-    }
-}
-
-#foot {
-    font-size: 0.9em;
-}
-
-#updating {
-    font-size: 0.9em;
-    text-align: right;
-}
-
 #head, #head *, #foot, #foot * {
     color: #999;
 }
 
-#created {
-    color: #333;
-}
-#modified {
-    font-size: 0.8em;
+#foot {
+    font-size: 0.9em;
 }
 
 #title {
@@ -148,3 +120,25 @@ h1, h2, h3, h4, h5, h6 {
     color: #114;
 }
 
+#updating {
+    font-size: 0.9em;
+    text-align: right;
+}
+#updating time {
+    display: block;
+}
+#created {
+    color: #333;
+}
+#modified {
+    font-size: 0.8em;
+}
+
+
+/* Status: draft */
+body.draft #body {
+    opacity: 0.5;
+}
+body.draft #modified:before {
+    content: '(DRAFT) ';
+}
