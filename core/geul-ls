@@ -128,5 +128,5 @@ process() {
 
 ## list
 cd "$Root"
-find * -type f "${pathq[@]}" "${nameq[@]}" |
+find * ! -type d "${pathq[@]}" "${nameq[@]}" |
 process
