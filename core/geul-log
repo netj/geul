@@ -17,16 +17,25 @@ relpath=`geul-path-parse "$Path"`
 
 if git tag &>/dev/null; then
     # fetch history from Git
-    nrrevs=$(( 1
-    + `git log --format=format: --follow -- "$GEUL_ROOT/$relpath" | wc -l`
+    nrrevs=$((
+    + `git log --format=format:1 --follow -- "$GEUL_ROOT/$relpath" | wc -w`
     + `hd <"$Path" | grep -c "^Revision-.*:" || true`
     ))
     # TODO sort these by date
     {
-        # fetch revisions from git
+        # revision to the working tree
+        if [ $nrrevs -eq 0 -o \
+            `git diff --name-only HEAD -- "$GEUL_ROOT/$relpath" | wc -l` -gt 0 ]; then
+            echo Revision $(($nrrevs + 1))
+            date -r "$GEUL_ROOT/$relpath" +"Date: %FT%T%:z"
+            echo Status: draft
+            echo
+            echo
+        fi
+        # revisions from git
         git log --format=format:"Revision %nDate: %ad%nAuthor: %aN%n%n%s%n" \
             --date=iso --follow -- "$GEUL_ROOT/$relpath"
-        # old revisions recorded in header
+        # revisions recorded in header
         hd <"$Path" | awk '
         BEGIN {
             inRev=0
