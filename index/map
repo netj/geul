@@ -69,8 +69,16 @@ while (defined (my $l = <>)) {
     } elsif ($l =~ /^-\s*(.*)$/) {
         # remove
         # -KEY
-        my $k = $prefix.$1;
-        delete $Map{$k};
+        if ($1 ne "") {
+            # remove a single mapping
+            my $k = $prefix.$1;
+            delete $Map{$k};
+        } else {
+            # remove all mappings
+            for my $k (grep /^$prefix/, keys %Map) {
+                delete $Map{$k};
+            }
+        }
         print $l . "\n";
     } elsif ($l =~ /^\s*$/) {
         # empty line
