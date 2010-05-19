@@ -40,26 +40,26 @@ my %Satisfies = (
 );
 
 my $id;
-my $skip = 0;
+my $satisfied = 0;
 my $n; my $v;
 sub check {
     if (defined $v) {
-        $skip = 1 unless $Satisfies{$n}->($v);
+        $satisfied = 1 if $Satisfies{$n}->($v);
         $v = undef;
     }
 }
 sub print_matched {
     check();
-    print $id."\n" if defined $id and not $skip;
+    print $id."\n" if defined $id and $satisfied;
 }
 while (defined (my $l = <>)) {
     chomp $l;
     if ($l =~ /^\^(.*) $/) { # XXX watch out for the trailing space!
         print_matched();
         $id = $1;
-        $skip = 0;
+        $satisfied = 0;
         $n = $v = undef;
-    } elsif (not $skip and defined $id) {
+    } elsif (not $satisfied and defined $id) {
         if ($l =~ /^\s+(.*)/) {
             $v .= "\n" . $1;
         } elsif ($l =~ /^(.*?):(.*)$/) {
