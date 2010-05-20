@@ -151,3 +151,16 @@ function getNeighborArticlesFor(asyncTask) {
             }
         });
 }
+
+
+// Make updating info prettier
+$(document).ready(function() {
+        if (navigator.language.match(/^ko/)) {
+            $("#created time").after(" 올림");
+            $("#modified time").after(" 고침");
+        } else {
+            $("#created time").before("Published ");
+            $("#modified time").before("Modified ");
+        }
+        });
+

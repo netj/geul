@@ -11,6 +11,33 @@
     <xsl:import href="xsltsl/string.xsl"/>
     <xsl:import href="xsltsl/date-time.xsl"/>
 
+    <xsl:template match="node()|@*" mode="datetime">
+        <!-- TODO use XSLT 2.0 and the new XPath date functions -->
+        <xsl:variable name="dtz" select="translate(., 'T', ' ')"/>
+        <xsl:choose>
+            <xsl:when test="contains($dtz, ' ')">
+                <xsl:value-of select="substring-before($dtz, ' ')"/>
+                <xsl:text> </xsl:text>
+                <xsl:variable name="tz" select="translate(
+                    substring-after($dtz, ' '), 'Z+-', '   ')"/>
+                <small>
+                    <xsl:choose>
+                        <xsl:when test="contains($tz, ' ')">
+                            <xsl:value-of select="substring-before($tz, ' ')"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:value-of select="$tz"/>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </small>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="."/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+
+
     <xsl:template match="@date | dc:date | @generated | @created">
         <time datetime="{.}">
             <xsl:apply-templates select="." mode="date"/>

@@ -6,6 +6,8 @@
     exclude-result-prefixes="atom html"
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
+    <xsl:import href="date.xsl"/>
+
     <xsl:template match="atom:feed">
         <div class="atom-feed">
             <xsl:apply-templates select="atom:entry"/>
@@ -24,12 +26,12 @@
                         <xsl:value-of select="atom:title"/>
                     </xsl:otherwise>
             </xsl:choose></h1>
-            <div class="atom-published">
-                <xsl:if test="not(atom:published)">
-                    <xsl:comment>not available</xsl:comment>
-                </xsl:if>
-                <xsl:apply-templates select="atom:published" mode="date"/>
-            </div>
+            <div class="atom-published"><time datetime="{atom:published}">
+                    <xsl:if test="not(atom:published)">
+                        <xsl:comment>not available</xsl:comment>
+                    </xsl:if>
+                    <xsl:apply-templates select="atom:published" mode="datetime"/>
+            </time></div>
 
             <!-- summary -->
             <xsl:if test="atom:summary">

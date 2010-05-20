@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <!-- 
-XSLT for presenting Geul articles in HTML
-Author: Jaeho Shin &lt;netj@sparcs.org>
-Created: 2009-06-04
+    XSLT for presenting Geul articles in HTML
+    Author: Jaeho Shin &lt;netj@sparcs.org>
+    Created: 2009-06-04
 -->
 <xsl:stylesheet version="1.0"
     xmlns="http://www.w3.org/1999/xhtml"
@@ -10,13 +10,11 @@ Created: 2009-06-04
     xmlns:atom="http://www.w3.org/2005/Atom"
     xmlns:geul="http://netj.org/2009/geul"
     xmlns:exsl="http://exslt.org/common"
-    xmlns:dt="http://xsltsl.org/date-time"
     xmlns:dc="http://purl.org/dc/elements/1.1/"
-    exclude-result-prefixes="html atom geul exsl dt dc"
+    exclude-result-prefixes="html atom geul exsl dc"
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
     <xsl:import href="id.xsl"/>
-    <xsl:import href="date.xsl"/>
     <xsl:import href="atom2html.xsl"/>
 
     <xsl:output method="xml"/>
@@ -68,7 +66,9 @@ Created: 2009-06-04
         <!-- TODO use geul:title() instead -->
         <title><xsl:value-of select="normalize-space(//html:head/html:title)"/></title>
         <link rel="stylesheet" type="text/css" href="chrome/geul.css"/>
+        <script type="text/javascript" src="chrome/jquery-1.4.2.min.js">;</script>
         <script type="text/javascript" src="chrome/geul.js">;</script>
+        <script type="text/javascript" src="chrome/geul.datetime.js">;</script>
         <meta name="PermaLink" content="{$BaseURL}{$Id}"/>
     </xsl:template>
 
@@ -103,29 +103,31 @@ Created: 2009-06-04
             //html:meta[@name='Created']/@content |
             //geul:revision[last()]/@date
             )[1]"/>
-        <time id="created" datetime="{$created}">
-            <xsl:choose>
-                <xsl:when test="//geul:revision">
-                    <xsl:apply-templates select="$created" mode="date"/>
-                </xsl:when>
-                <xsl:otherwise>
-                    <xsl:comment>not available</xsl:comment>
-                </xsl:otherwise>
-            </xsl:choose>
-        </time>
-        <time id="modified" datetime="{$revision/@date}">
+        <div id="created"><time datetime="{$created}">
+                <xsl:choose>
+                    <xsl:when test="//geul:revision">
+                        <xsl:apply-templates select="$created" mode="datetime"/>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:comment>not available</xsl:comment>
+                    </xsl:otherwise>
+                </xsl:choose>
+        </time></div>
+        <div id="modified">
             <xsl:choose>
                 <xsl:when test="//geul:revision">
                     <xsl:text>r</xsl:text>
                     <xsl:value-of select="$revision/@number"/>
                     <xsl:text>: </xsl:text>
-                    <xsl:apply-templates select="$revision/@date" mode="abbrv"/>
+                    <time datetime="{$revision/@date}">
+                        <xsl:apply-templates select="$revision/@date" mode="datetime"/>
+                    </time>
                 </xsl:when>
                 <xsl:otherwise>
                     <xsl:comment>not available</xsl:comment>
                 </xsl:otherwise>
             </xsl:choose>
-        </time>
+        </div>
     </xsl:template>
 
 
