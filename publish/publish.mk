@@ -24,7 +24,11 @@ endif
 $(GEUL_STAGE)/%: %
 	$(progress)
 	mkdir -p $(@D)
-	install -m a+r-w $< $@
+	if [ -L $< ]; then \
+	    ln -sfn "`readlink "$<"`" "$@"; \
+	else \
+	    install -m a+r-w $< $@; \
+	fi
 
 
 ## HTML5 final output
