@@ -121,18 +121,13 @@ $(GEUL_STAGE)/%.json: $(GEUL_STAGE)/%.atom $(atom2json_xsl)
 	save-output $@ xslt "$(atom2json_xsl)" $<
 
 ## miscellanea
-tag=of Geul Configuration
-begin=^\# Begin $(tag)$
-end=^\# End $(tag)$
+$(GEUL_STAGE)/.htaccess:: .htaccess $(GEUL_BASE)/publish/htaccess
+	if ! cat $^ | diff -q - $@ >/dev/null; then \
+	    $(progress); \
+	    cat $^ >$@; \
+	fi
+
 $(GEUL_STAGE)/.htaccess:: $(GEUL_BASE)/publish/htaccess
-	$(progress); \
-	cat "$<" >>$@;
-$(GEUL_STAGE)/.htaccess:: $(GEUL_BASE)/publish/htaccess .htaccess
-	$(progress); \
-	cp -f .htaccess $@; \
-	screen -Dm vim -n $@ \
-	+ \
-	+"?$(begin)" \
-	+"norm V/$(end)s" \
-	+"r $<" +"norm -dd" \
-	+wq; \
+	$(progress)
+	cat $^ >$@
+
