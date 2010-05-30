@@ -33,12 +33,16 @@ sub p {
 }
 
 my $hd = {};
+my $last;
 while (my $line = <>) {
     utf8::decode($line);
     last if $line =~ /^\s*$/;
     chomp $line;
-    if ($line =~ /^([^:]+)\s*:\s*(.*)$/) {
+    if (defined $last and $line =~ /^\s+(.+)$/) {
+        $hd->{$last} .= "\n" . $1;
+    } elsif ($line =~ /^([^:]+)\s*:\s*(.*)$/) {
         $hd->{$1} = $2;
+        $last = $1;
     }
 }
 p(sprintf "<title>%s</title>\n", escapeXML($hd->{Title})); delete $hd->{Title};
