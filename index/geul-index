@@ -44,8 +44,9 @@ case "$Command" in
     # add/update metadata
     {
         echo "^$id " # XXX watch out for the trailing space!
-        cat "$Meta"
-        echo -n "Summary:"; sed 's/^/ /' <"$Summary"
+        echo - # clear all metadata
+        cat "$Meta" # feed metadata
+        echo -n "Summary:"; sed 's/^/ /' <"$Summary" # and summary
     } | map "$IDX/meta.db" >/dev/null
     ;;
 
