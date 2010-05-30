@@ -6,6 +6,8 @@
     exclude-result-prefixes="atom html"
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
+    <xsl:import href="date.xsl"/>
+
     <xsl:template match="atom:feed">
         <div class="atom-feed">
             <xsl:apply-templates select="atom:entry"/>
@@ -14,22 +16,22 @@
 
     <xsl:template match="atom:entry">
         <div class="atom-entry">
-            <xsl:variable name="link" select="atom:link[@rel='alternative' or not(@rel)]"/>
+            <xsl:variable name="link" select="atom:link[@rel='alternative' or not(@rel)][1]"/>
             <!-- title and published -->
-            <h2 class="atom-title"><xsl:choose>
+            <h1 class="atom-title"><xsl:choose>
                     <xsl:when test="$link">
                         <a href="{$link/@href}"><xsl:value-of select="atom:title"/></a>
                     </xsl:when>
                     <xsl:otherwise>
                         <xsl:value-of select="atom:title"/>
                     </xsl:otherwise>
-            </xsl:choose></h2>
-            <div class="atom-published">
-                <xsl:if test="not(atom:published)">
-                    <xsl:comment>not available</xsl:comment>
-                </xsl:if>
-                <xsl:apply-templates select="atom:published" mode="date"/>
-            </div>
+            </xsl:choose></h1>
+            <div class="atom-published"><time datetime="{atom:published}">
+                    <xsl:if test="not(atom:published)">
+                        <xsl:comment>not available</xsl:comment>
+                    </xsl:if>
+                    <xsl:apply-templates select="atom:published" mode="datetime"/>
+            </time></div>
 
             <!-- summary -->
             <xsl:if test="atom:summary">

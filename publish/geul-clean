@@ -7,7 +7,7 @@ set -e
 . "$GEUL.running-inside-a-repo"
 
 # remove staged resources
-geul-ls -as "$@" | (cd "$GEUL_STAGE"; xargs rm -vf)
+geul-ls -as "$@" | (cd "$GEUL_STAGE/$GEUL_PATH"; xargs rm -vf)
 
 # remove empty-containing directories
 geul-ls -a "$@" |

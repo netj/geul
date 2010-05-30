@@ -84,8 +84,8 @@ remove_ignored() {
 }
 
 remove_suffices() {
-    local patts=`tr ' ' '|' <<<"${Suffices[*]}" | sed 's/\.\||/\\\\&/g'`
-    sed "s/\($patts\)$//;"
+    local patts=`tr ' ' '|' <<<"${Suffices[*]}" | sed -E 's/[.]/\\\&/g'`
+    sed -E "s/($patts)$//"
 }
 
 # pretty printing
@@ -118,7 +118,9 @@ process() {
     if [ -r "$GEUL_DIR/ignore" ]; then
         cmd+=(\| remove_ignored)
     fi
-    ! $ListId || cmd+=(\| remove_suffices)
+    if $ListId; then
+        cmd+=(\| remove_suffices)
+    fi
     cmd+=(\| polish)
     eval "${cmd[@]}"
 }
@@ -126,5 +128,5 @@ process() {
 
 ## list
 cd "$Root"
-find * -type f "${pathq[@]}" "${nameq[@]}" |
+find * ! -type d "${pathq[@]}" "${nameq[@]}" |
 process

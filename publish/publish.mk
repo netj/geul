@@ -24,7 +24,11 @@ endif
 $(GEUL_STAGE)/%: %
 	$(progress)
 	mkdir -p $(@D)
-	install -m a+r-w $< $@
+	if [ -L $< ]; then \
+	    ln -sfn "`readlink "$<"`" "$@"; \
+	else \
+	    install -m a+r-w $< $@; \
+	fi
 
 
 ## HTML5 final output
@@ -39,7 +43,7 @@ chromexsl:=$(GEUL_DIR)/chrome.xsl
 ifeq ($(shell test -e "$(chromexsl)" || echo false),)
     define chrome
 	save-output $@ xslt "$(chromexsl)" $< \
-	    $${GEUL_BASEURL:+\?BaseURL="'$$GEUL_BASEURL'"}
+	    $${GEUL_BASEURL:+BaseURL="$$GEUL_BASEURL"}
     endef
 else
     chromexsl:=
@@ -64,8 +68,8 @@ article_xsl:=$(GEUL_BASE)/publish/article.xsl
 $(GEUL_STAGE)/%.xhtml-plain: $(GEUL_STAGE)/%.xhtml-raw $(GEUL_STAGE)/%.atom $(GEUL_DIR)/base-url $(article_xsl)
 	$(progress)
 	save-output $@ xslt "$(article_xsl)" $< \
-	    \?Id="'$*'" \
-	    $${GEUL_BASEURL:+\?BaseURL="'$$GEUL_BASEURL'"}
+	    Id="$*" \
+	    $${GEUL_BASEURL:+BaseURL="$$GEUL_BASEURL"}
 $(GEUL_STAGE)/%.xhtml-raw: $(GEUL_STAGE)/%.xhtml-head $(GEUL_STAGE)/%.geul
 	$(progress)
 	save-output $@ text2xhtml $^
@@ -81,8 +85,7 @@ $(GEUL_STAGE)/%.meta: $(GEUL_STAGE)/%.geul $(GEUL_STAGE)/%.log  $(GEUL_BASE)/pub
 	save-output $@ text2meta $* $(GEUL_STAGE)/$*.geul $(GEUL_STAGE)/$*.log
 $(GEUL_STAGE)/%.log: $(GEUL_STAGE)/%.geul
 	$(progress)
-	-geul-log $< >$@
-#	save-output $@ geul-log $*
+	save-output $@ geul-log $*.geul
 
 # See http://www.gnu.org/software/make/manual/make.html#Multiple-Rules
 # xhtml-based
@@ -113,29 +116,18 @@ $(GEUL_STAGE)/%.atom: $(GEUL_STAGE)/%.meta
 	fi
 
 atom2json_xsl:=$(GEUL_BASE)/publish/atom2json.xsl
-$(GEUL_STAGE)/%.json: $(GEUL_STAGE)/%.atom
+$(GEUL_STAGE)/%.json: $(GEUL_STAGE)/%.atom $(atom2json_xsl)
 	$(progress)
 	save-output $@ xslt "$(atom2json_xsl)" $<
 
 ## miscellanea
-tag=of Geul Configuration
-begin=^\# Begin $(tag)$
-end=^\# End $(tag)$
-.PHONY: $(GEUL_STAGE)/.htaccess
-$(GEUL_STAGE)/.htaccess:
-	f="$(GEUL_BASE)/publish/htaccess"; \
-	if [ -e $@ ]; then \
-	    s1=`sed -n "/$(begin)/,/$(end)/p" <$@ | md5sum`; \
-	    s2=`md5sum <"$$f"`; \
-	    if [ x"$$s1" != x"$$s2" ]; then \
-		$(progress); \
-		screen -Dm vim -n $@ \
-		+"/$(begin)" \
-		+"norm V/$(end)s" \
-		+"r $$f" +"norm -dd" \
-		+wq; \
-	    fi; \
-	else \
+$(GEUL_STAGE)/.htaccess:: .htaccess $(GEUL_BASE)/publish/htaccess
+	if ! cat $^ | diff -q - $@ >/dev/null; then \
 	    $(progress); \
-	    cat "$$f" >>$@; \
+	    cat $^ >$@; \
 	fi
+
+$(GEUL_STAGE)/.htaccess:: $(GEUL_BASE)/publish/htaccess
+	$(progress)
+	cat $^ >$@
+

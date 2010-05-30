@@ -9,7 +9,7 @@ set -e
 Path=$1; shift
 Meta=$1; shift
 
-BASE_URL=`cat "$GEUL_DIR/base-url"`
+GEUL_BASEURL=`cat "$GEUL_DIR/base-url"`
 
 xml-escape() {
     x=$1
@@ -33,12 +33,12 @@ echo
 # TODO subtitle?
 # TODO author+
 # id
-printf '<id>%s</id>' "`xml-escape "$BASE_URL$id"`"
+printf '<id>%s</id>' "`xml-escape "$GEUL_BASEURL$id"`"
 echo
 # link+
-printf '<link rel="self" href="%s"/>' "`xml-escape "$BASE_URL$id.atom"`"
+printf '<link rel="self" href="%s"/>' "`xml-escape "$GEUL_BASEURL$id.atom"`"
 echo
-printf '<link href="%s"/>' "`xml-escape "$BASE_URL${id%index}"`"
+printf '<link href="%s"/>' "`xml-escape "$GEUL_BASEURL${id%index}"`"
 echo
 # TODO icon?
 # TODO logo?
@@ -56,9 +56,9 @@ generate-atom-entry() {
     eval "`parse-meta title created summary`"
     echo '<entry>'
     printf '<title type="text">%s</title>' "`xml-escape "$title"`"
-    printf '<link href="%s"/>' "`xml-escape "$BASE_URL${id%index}"`"
+    printf '<link href="%s"/>' "`xml-escape "$GEUL_BASEURL${id%index}"`"
     printf '<published>%s</published>' "`xml-escape "$created"`"
-    printf '<id>%s</id>' "`xml-escape "$BASE_URL$id"`"
+    printf '<id>%s</id>' "`xml-escape "$GEUL_BASEURL$id"`"
     # TODO translate more tags
     echo '<summary type="xhtml">'
     echo '<div xmlns="http://www.w3.org/1999/xhtml">'

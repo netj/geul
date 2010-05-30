@@ -1,0 +1,75 @@
+#!/usr/bin/env bash
+# filter-meta -- filter list of articles with their metadata
+#
+# Author: Jaeho Shin <netj@sparcs.org>
+# Created: 2010-05-18
+set -e
+. "$GEUL.sh"
+
+# pass thru if no argument was given
+[ $# -gt 0 ] || exec cat
+
+# prepare filter from arguments
+names=()
+preds=()
+for p; do
+    case "$p" in
+        !*:*)
+        p=${p#!}
+        name=${p%%:*}
+        patt=${p#*:}
+        names+=("$name")
+        preds+=("'$name'=>sub{\$_[0]!~m#^${patt//#/\#}\$#},")
+        ;;
+        *:*)
+        name=${p%%:*}
+        patt=${p#*:}
+        names+=("$name")
+        preds+=("'$name'=>sub{\$_[0]=~m#^${patt//#/\#}\$#},")
+        ;;
+        *)
+        error "Unknown predicate syntax"
+        ;;
+    esac
+done
+
+# go through the given list of article IDs with their metadata
+geul-index meta "${names[@]}" | perl -e '
+my %Satisfies = (
+'"$(for p in "${preds[@]}"; do echo " $p"; done)"'
+);
+
+my $id;
+my $satisfied = 0;
+my $n; my $v;
+sub check {
+    if (defined $v) {
+        $satisfied = 1 if $Satisfies{$n}->($v);
+        $v = undef;
+    }
+}
+sub print_matched {
+    check();
+    print $id."\n" if defined $id and $satisfied;
+}
+while (defined (my $l = <>)) {
+    chomp $l;
+    if ($l =~ /^\^(.*) $/) { # XXX watch out for the trailing space!
+        print_matched();
+        $id = $1;
+        $satisfied = 0;
+        $n = $v = undef;
+    } elsif (not $satisfied and defined $id) {
+        if ($l =~ /^\s+(.*)/) {
+            $v .= "\n" . $1;
+        } elsif ($l =~ /^(.*?):(.*)$/) {
+            check();
+            $n = $1;
+            $v = $2;
+        } else {
+            check();
+        }
+    }
+}
+print_matched();
+'
