@@ -16,14 +16,14 @@ fi
 if git tag &>/dev/null; then
     # fetch history from Git
     nrrevs=$((
-    `git log --format=format: -- "$Path" | wc -l`
+    `git log --pretty=format: -- "$Path" | wc -l`
     +
     `hd <"$Path" | grep -c "^Revision-.*:" || true`
     ))
     # TODO sort these by date
     {
         # fetch revisions from git
-        git log --format=format:"Revision %nDate: %ad%nAuthor: %aN%n%n%s%n" \
+        git log --pretty=format:"Revision %nDate: %ad%nAuthor: %aN%n%n%s%n" \
             --date=iso --follow -- "$Path"
         # old revisions recorded in header
         hd <"$Path" | awk '
