@@ -38,11 +38,12 @@ cd "$GEUL_ROOT"
 tmp=`mktemp -d /tmp/geul-publish.XXXXXX`
 trap "rm -rf $tmp" EXIT
 geul-index ls | sort >$tmp/index-items
-geul-ls -i | sort | diff $tmp/index-items - | sed -n '/^< / s/^< //p' >$tmp/stale-items
+geul-ls -i | sort | diff $tmp/index-items - |
+sed -n '/^< / { s/^< //; /^$/d; p }' >$tmp/stale-items
 if [ -s $tmp/stale-items ]; then
     xargs <$tmp/stale-items  geul-index rm
     # TODO maybe we can limit the regenerations to indexes that touch the stale-items
     geul-update-feeds
-    geul publish
+    geul-publish
 fi
 # TODO what if new items were added? should we always update the feeds whenever our index changes?
