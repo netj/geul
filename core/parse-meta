@@ -14,7 +14,7 @@ my $value;
 sub emitKey {
     $key = lc $key;
     $key =~ s/-/_/g;
-    if (not @KeysToParse or grep quotemeta($key), @KeysToParse) {
+    if (not @KeysToParse or grep {$key eq $_} @KeysToParse) {
         $value =~ s/'/'\\''/g;
         printf "%s='%s'\n", $key, $value;
         $key = undef;
