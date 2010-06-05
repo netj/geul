@@ -10,7 +10,23 @@
 //   http://delete.me.uk/2005/03/iso8601.html
 //   http://code.google.com/p/datejs/
 function parseISODate(isodt) {
-    return new Date((isodt || "").replace(/-/g,"/").replace(/[TZ]/g," "));
+    var d;
+    var s = (isodt || "").replace(/-/g,"/").replace(/[TZ]/g," ");
+    var m = s.match(/(.*)([+-])(\d\d)(:?(\d\d))?$/);
+    if (m) {
+        d = new Date(m[1]);
+        var tzH = parseInt(m[3].replace(/^0*/,""));
+        var tzM = parseInt(m[5].replace(/^0*/,"").replace(/^$/,"0"));
+        var tzOffset = tzH * 60 + tzM;
+        if (m[2] == '-')
+            tzOffset *= -1;
+        var offset = d.getTimezoneOffset() + tzOffset;
+        if (offset != 0)
+            d.setTime(d.getTime() + offset*60*1000);
+    } else {
+        d = new Date(s);
+    }
+    return d;
 }
 
 
