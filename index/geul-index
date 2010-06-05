@@ -29,6 +29,7 @@ case "$Command" in
     add)
     Meta=$1; shift
     Summary=$1; shift
+    XHTML=$1; shift
     # add/update list
     eval "`parse-meta id title created <"$Meta"`"
     id=${id//\'/\'\'}
@@ -41,13 +42,18 @@ case "$Command" in
         INSERT INTO Articles
         VALUES ('$id', '$title', '$created')
     "
-    # add/update metadata
+    # update metadata
     {
         echo "^$id " # XXX watch out for the trailing space!
         echo - # clear all metadata
         cat "$Meta" # feed metadata
         echo -n "Summary:"; sed 's/^/ /' <"$Summary" # and summary
     } | map "$IDX/meta.db" >/dev/null
+    # update link index
+    #  TODO remove more absolute URLs
+    xslt "$GEUL_BASE/index/extract-links.xsl" "$XHTML" 2>/dev/null |
+    sed '\#^\([^:]*://\|\(mailto\|news\):\)# d' |
+    links "$IDX/links.db" update "$id" >/dev/null
     ;;
 
     rm)
@@ -62,6 +68,8 @@ case "$Command" in
             WHERE $filter
         "
     fi
+    # TODO remove from metadata
+    # TODO remove from link index
     ;;
 
     ls)
@@ -77,6 +85,10 @@ case "$Command" in
         ${filter:+WHERE $filter}
         ORDER BY Articles.date DESC
     "
+    ;;
+
+    links)
+    exec links "$IDX/links.db" "$@"
     ;;
 
     filter)

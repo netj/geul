@@ -102,14 +102,14 @@ $(GEUL_STAGE)/%.meta: $(GEUL_STAGE)/%.xhtml
 
 
 ## indexing
-$(GEUL_STAGE)/%.indexed: $(GEUL_STAGE)/%.meta $(GEUL_STAGE)/%.summary
+$(GEUL_STAGE)/%.indexed: $(GEUL_STAGE)/%.meta $(GEUL_STAGE)/%.summary $(GEUL_STAGE)/%.xhtml-raw
 	$(progress)
 	geul-index add $^
 	touch $@
 
 
 ## feed
-$(GEUL_STAGE)/%.atom: $(GEUL_STAGE)/%.meta
+$(GEUL_STAGE)/%.atom: $(GEUL_STAGE)/%.meta $(GEUL_STAGE)/%.indexed
 	if grep -qi ^Feed-Method: $<; then \
 	    $(progress); \
 	    save-output $@ feed2atom $* $^; \

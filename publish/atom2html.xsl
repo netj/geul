@@ -10,7 +10,10 @@
 
     <xsl:template match="atom:feed">
         <div class="atom-feed">
-            <xsl:apply-templates select="atom:entry"/>
+            <xsl:apply-templates select="atom:entry">
+                <!-- XXX should we preserve the order of entries in Atom? -->
+                <xsl:sort select="atom:published" order="descending"/>
+            </xsl:apply-templates>
         </div>
     </xsl:template>
 

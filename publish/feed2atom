@@ -35,8 +35,9 @@ esac
 
 # generate feed
 case "$feedmethod" in
-    links-*) geul-links ${feedmethod#links-} "$feedtarget" ;;
-    list)    geul-index ls "$feedtarget" ;;
+    links-both|links-from|links-to)
+                geul-index links ${feedmethod#links-} "$feedtarget" ;;
+    list)       geul-index ls "$feedtarget" ;;
 esac |
 geul-index filter "!Status:draft" |
 if [ -n "$feedsize" ]
