@@ -6,7 +6,7 @@ set -e
 . "$GEUL.sh"
 . "$GEUL.running-inside-a-repo"
 
-Path=$1; shift
+Id=$1; shift
 Meta=$1; shift
 
 while read n v; do
@@ -26,7 +26,7 @@ fi
 # default values
 case "$feedmethod" in
     links-*)
-    : ${feedtarget:=$Path} ${feedsize:=}
+    : ${feedtarget:=$Id} ${feedsize:=}
     ;;
     list)
     : ${feedtarget:=*} ${feedsize:=}
@@ -43,4 +43,4 @@ if [ -n "$feedsize" ]
 then head -n $feedsize
 else cat
 fi |
-ls2atom "$Path" "$Meta"
+ls2atom "$Id" "$Meta"
