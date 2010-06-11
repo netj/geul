@@ -118,7 +118,7 @@
                 <xsl:when test="//geul:revision">
                     <xsl:text>r</xsl:text>
                     <xsl:value-of select="$revision/@number"/>
-                    <xsl:text>: </xsl:text>
+                    <xsl:text> </xsl:text>
                     <time datetime="{$revision/@date}">
                         <xsl:apply-templates select="$revision/@date" mode="datetime"/>
                     </time>
