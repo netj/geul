@@ -47,7 +47,7 @@ function relativeDate(date) {
     if ( isNaN(day_diff) || day_diff < 0 || day_diff >= 31 )
         return null;
 
-    if (navigator.language.match(/^ko/))
+    if (navigator.language && navigator.language.match(/^ko/))
         return day_diff == 0 && (
                 diff < 60 && "방금" ||
                 diff < 3600 && "약 " + Math.floor( diff / 60 ) + "분 전에" ||

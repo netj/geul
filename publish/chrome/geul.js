@@ -155,7 +155,7 @@ function getNeighborArticlesFor(asyncTask) {
 
 // Make updating info prettier
 $(document).ready(function() {
-        if (navigator.language.match(/^ko/)) {
+        if (navigator.language && navigator.language.match(/^ko/)) {
             $("#created time").after(" 올림");
             $("#modified time").after(" 고침");
         } else {
