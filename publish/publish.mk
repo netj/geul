@@ -122,7 +122,7 @@ $(GEUL_STAGE)/%.json: $(GEUL_STAGE)/%.atom $(atom2json_xsl)
 
 ## miscellanea
 $(GEUL_STAGE)/.htaccess:: .htaccess $(GEUL_BASE)/publish/htaccess
-	if ! cat $^ | diff -q - $@ >/dev/null; then \
+	if ! cat $^ | diff -q - $@ &>/dev/null; then \
 	    $(progress); \
 	    cat $^ >$@; \
 	fi
