@@ -40,18 +40,21 @@ fi
 GEUL_ROOT=`readlink -f "$GEUL_ROOT"`
 pathq=()
 if [ $# -eq 0 ]; then
-    set -- "."
+    set -- "*"
 fi
 for Path; do
     p=`readlink -f "$Path" || echo "$Path"`
-    p=${p#$GEUL_ROOT}
-    p=${p#/}
-    p=${p%/}
+    case "$p" in
+        "$GEUL_ROOT"/*)
+        p=${p#$GEUL_ROOT}
+        p=${p#/}
+        p=${p%/}
+        ;;
+        *)
+        p=$Path
+        ;;
+    esac
     if [ -n "$p" ]; then
-        if [ -d "$Path" ]; then
-            p="$p/"
-        fi
-        p="$p*"
         pathq+=(${pathq:+-o} -ipath "$p")
     fi
 done
@@ -68,7 +71,7 @@ done
 ## steps for processing output
 # listing order
 order() {
-    xargs ls "${ListOptions[@]}"
+    xargs ls -d "${ListOptions[@]}"
 }
 
 remove_ignored() {
