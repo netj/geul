@@ -87,8 +87,8 @@ remove_ignored() {
 }
 
 remove_suffices() {
-    local patts=`tr ' ' '|' <<<"${Suffices[*]}" | sed -E 's/[.]/\\\&/g'`
-    sed -E "s/($patts)$//"
+    local patts=`sed 's/ /\\\|/g' <<<"${Suffices[*]}" | sed 's/[.]/\\\&/g'`
+    sed "s/\\($patts\\)$//"
 }
 
 # pretty printing
