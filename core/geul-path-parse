@@ -21,9 +21,9 @@ GEUL_ROOT=`readlink -f "$GEUL_ROOT"`
 GEUL_DIR=`readlink -f "$GEUL_DIR"`
 id=`readlink -f "$Path" || echo "$PWD/$Path"`
 case "$id" in
-    "$GEUL_STAGE"*) id=${id#$GEUL_STAGE} ;;
-    "$GEUL_DIR"*) invalid-path ;;
-    "$GEUL_ROOT"*) id=${id#$GEUL_ROOT} ;;
+    "$GEUL_STAGE"/*) id=${id#$GEUL_STAGE} ;;
+    "$GEUL_DIR"/*) invalid-path ;;
+    "$GEUL_ROOT"/*) id=${id#$GEUL_ROOT} ;;
     *) invalid-path ;;
 esac
 
