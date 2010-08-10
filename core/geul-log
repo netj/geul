@@ -33,8 +33,9 @@ if git tag &>/dev/null; then
             echo
         fi
         # revisions from git
-        git log --pretty=format:"Revision %nDate: %ad%nAuthor: %aN%n%n%s%n" \
-            --date=iso --follow -- "$GEUL_ROOT/$relpath"
+        git log --pretty=format:"Revision %nDate: %ai%nAuthor: %aN%n%n%s%n" \
+            --follow -- "$GEUL_ROOT/$relpath" |
+        sed '/Date:/ s/\([+-]\)\([0-9][0-9]\)\([0-9][0-9]\)/\1\2:\3/'
         # revisions recorded in header
         hd <"$Path" | awk '
         BEGIN {
