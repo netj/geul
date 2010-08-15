@@ -32,7 +32,7 @@ $(GEUL_STAGE)/%: %
 
 
 ## HTML5 final output
-xhtml2html5xsl := $(GEUL_BASE)/publish/xhtml2html5.xsl
+xhtml2html5xsl := $(GEUL_DATADIR)/publish/xhtml2html5.xsl
 $(GEUL_STAGE)/%.html: $(GEUL_STAGE)/%.xhtml $(xhtml2html5xsl)
 	$(progress)
 	save-output $@ xslt "$(xhtml2html5xsl)" $<
@@ -55,7 +55,7 @@ $(GEUL_STAGE)/%.xhtml: $(GEUL_STAGE)/%.xhtml-plain $(chromexsl) $(GEUL_STAGE)/%.
 	$(progress)
 	$(chrome)
 
-$(GEUL_STAGE)/chrome/%:: $(GEUL_BASE)/publish/chrome/%
+$(GEUL_STAGE)/chrome/%:: $(GEUL_DATADIR)/publish/chrome/%
 	$(progress)
 	mkdir -p $(@D)
 	install -m +r-wx $< $@
@@ -63,7 +63,7 @@ $(GEUL_STAGE)/chrome/%:: $(GEUL_BASE)/publish/chrome/%
 
 ## article
 # text-based
-article_xsl:=$(GEUL_BASE)/publish/article.xsl
+article_xsl:=$(GEUL_DATADIR)/publish/article.xsl
 # TODO: clean up extension names
 $(GEUL_STAGE)/%.xhtml-plain: $(GEUL_STAGE)/%.xhtml-raw $(GEUL_STAGE)/%.atom $(GEUL_DIR)/base-url $(article_xsl)
 	$(progress)
@@ -77,10 +77,10 @@ $(GEUL_STAGE)/%.xhtml-head: $(GEUL_STAGE)/%.meta $(GEUL_STAGE)/%.log
 	$(progress)
 	save-output $@ meta2xhtml-head $* $^
 
-$(GEUL_STAGE)/%.summary: $(GEUL_STAGE)/%.meta $(GEUL_STAGE)/%.geul  $(GEUL_BASE)/publish/text2summary
+$(GEUL_STAGE)/%.summary: $(GEUL_STAGE)/%.meta $(GEUL_STAGE)/%.geul  $(GEUL_CMDDIR)/publish/text2summary
 	$(progress)
 	save-output $@ text2summary $(GEUL_STAGE)/$*.meta $(GEUL_STAGE)/$*.geul
-$(GEUL_STAGE)/%.meta: $(GEUL_STAGE)/%.geul $(GEUL_STAGE)/%.log  $(GEUL_BASE)/publish/text2meta
+$(GEUL_STAGE)/%.meta: $(GEUL_STAGE)/%.geul $(GEUL_STAGE)/%.log  $(GEUL_CMDDIR)/publish/text2meta
 	$(progress)
 	save-output $@ text2meta $* $(GEUL_STAGE)/$*.geul $(GEUL_STAGE)/$*.log
 $(GEUL_STAGE)/%.log: $(GEUL_STAGE)/%.geul
@@ -115,17 +115,17 @@ $(GEUL_STAGE)/%.atom: $(GEUL_STAGE)/%.meta $(GEUL_STAGE)/%.indexed
 	    save-output $@ feed2atom $* $^; \
 	fi
 
-atom2json_xsl:=$(GEUL_BASE)/publish/atom2json.xsl
+atom2json_xsl:=$(GEUL_DATADIR)/publish/atom2json.xsl
 $(GEUL_STAGE)/%.json: $(GEUL_STAGE)/%.atom $(atom2json_xsl)
 	$(progress)
 	save-output $@ xslt "$(atom2json_xsl)" $<
 
 ## miscellanea
-$(GEUL_STAGE)/.htaccess:: $(GEUL_BASE)/publish/htaccess
+$(GEUL_STAGE)/.htaccess:: $(GEUL_DATADIR)/publish/htaccess
 	$(progress)
 	cat $^ >$@
 
-$(GEUL_STAGE)/.htaccess:: .htaccess $(GEUL_BASE)/publish/htaccess
+$(GEUL_STAGE)/.htaccess:: .htaccess $(GEUL_DATADIR)/publish/htaccess
 	if ! cat $^ | diff -q - $@ &>/dev/null; then \
 	    $(progress); \
 	    cat $^ >$@; \

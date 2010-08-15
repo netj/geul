@@ -2,5 +2,5 @@
 .*sw?
 *~
 
-.build
-ident
+/.stage
+/.build

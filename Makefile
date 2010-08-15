@@ -2,34 +2,41 @@
 # Author: Jaeho Shin <netj@sparcs.org>
 # Created: 2009-03-07
 
-NAME:=geul
-VERSION:=0.1.$(shell date +%Y%m%d)-snapshot
-PRODUCT:=$(NAME)-$(VERSION).sh
+VERSION:=0.9.$(shell date +%Y%m%d)
 
-MODULES:=$(shell find * -name .module -print | sed 's:/.module$$::' | sort --ignore-case)
-SRCS:= \
-      geul \
-      ident \
-      $(shell find $(MODULES) -type f \
-	  \! \( -name '.*sw?' -o -name .DS_Store \) | sed 's: :\\ :g')
+STAGEDIR := .stage
+
+export GEUL_BINDIR  := bin
+export GEUL_LIBDIR  := lib
+export GEUL_CMDDIR  := libexec/geul
+export GEUL_DATADIR := share/geul
+export GEUL_DOCDIR  := share/doc/geul
+
+include buildkit/modules.mk
+buildkit/modules.mk:
+	git clone http://github.com/netj/buildkit.git
+
+
+### XXX clean these up
+dist: $(NAME)-$(VERSION).sh
+$(NAME)-$(VERSION).sh: stage ident pojang/pojang
+	cd $(STAGEDIR); \
+	    pojang bin/geul * >$@
+	chmod +x $@
+pojang/pojang:
+	git clone http://github.com/netj/pojang.git
+
+
+ident: Makefile .git/HEAD stage
+	{ \
+	echo $(NAME) $(VERSION) `git rev-parse HEAD 2>/dev/null`; \
+	echo Modules:; \
+	all-modules; \
+	} >$@
+
 
 .build/$(PRODUCT): $(SRCS)
 	mkdir -p $(@D)
 	eval "pojang $(SRCS)" >$@
 	chmod +x $@
 
-ident: Makefile .git/HEAD
-	{ \
-	echo $(NAME) $(VERSION) `git rev-parse HEAD 2>/dev/null`; \
-	echo Modules: $(MODULES); \
-	} >$@
-
-
-.PHONY: all install clean distclean
-all install: .build/$(PRODUCT)
-install:
-	install $< ~/bin/$(NAME)
-clean:
-	rm -f .build/$(PRODUCT)
-distclean:
-	rm -rf .build

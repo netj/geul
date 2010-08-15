@@ -1,0 +1,3 @@
+[submodule "buildkit"]
+	path = buildkit
+	url = http://github.com/netj/buildkit.git

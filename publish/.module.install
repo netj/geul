@@ -1,0 +1,29 @@
+geul-publish           $GEUL_CMDDIR/$MODULE_NAME/
+geul-republish         $GEUL_CMDDIR/$MODULE_NAME/
+geul-update-feeds      $GEUL_CMDDIR/$MODULE_NAME/
+geul-clean             $GEUL_CMDDIR/$MODULE_NAME/
+before-geul-rm         $GEUL_CMDDIR/$MODULE_NAME/
+
+publish.mk             $GEUL_CMDDIR/$MODULE_NAME/
+save-output            $GEUL_CMDDIR/$MODULE_NAME/
+requires               $GEUL_CMDDIR/$MODULE_NAME/
+
+text2meta              $GEUL_CMDDIR/$MODULE_NAME/
+meta2xhtml-head        $GEUL_CMDDIR/$MODULE_NAME/
+
+text2xhtml             $GEUL_CMDDIR/$MODULE_NAME/
+article.xsl            $GEUL_DATADIR/$MODULE_NAME/
+
+feed2atom              $GEUL_CMDDIR/$MODULE_NAME/
+ls2atom                $GEUL_CMDDIR/$MODULE_NAME/
+text2summary           $GEUL_CMDDIR/$MODULE_NAME/
+
+xhtml2html5.xsl        $GEUL_DATADIR/$MODULE_NAME/
+atom2html.xsl          $GEUL_DATADIR/$MODULE_NAME/
+atom2json.xsl          $GEUL_DATADIR/$MODULE_NAME/
+date.xsl               $GEUL_DATADIR/$MODULE_NAME/
+id.xsl                 $GEUL_DATADIR/$MODULE_NAME/
+xsltsl                 $GEUL_DATADIR/$MODULE_NAME/
+
+chrome                 $GEUL_DATADIR/$MODULE_NAME/
+htaccess               $GEUL_DATADIR/$MODULE_NAME/

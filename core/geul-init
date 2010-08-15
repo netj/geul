@@ -22,7 +22,7 @@ GEUL_DIR="$GEUL_ROOT/.geul"
 mkdir -p "$GEUL_DIR"
 cd "$GEUL_DIR"
 mkdir -p stage index
-template="$GEUL_BASE/core/geul-init.d"
+template="$GEUL_DATADIR/core/geul-init.d"
 for f in format base-url ignore
 do cp -f "$template/$f" .
 done

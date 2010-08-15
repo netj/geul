@@ -8,5 +8,5 @@ set -e
 
 if [ $# -gt 0 ]; then
     cd "$GEUL_ROOT"
-    "$GEUL_BASE"/publish/publish.mk -r -s ${DEBUG:+-d} "$@"
+    publish.mk -r -s ${DEBUG:+-d} "$@"
 fi

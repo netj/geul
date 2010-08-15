@@ -14,17 +14,11 @@
 # Created: 2009-04-27
 set -e
 
-show-embedded-help() {
-    local cmd=$1
-    local name=${cmd##*/}
-    sed -n <"$cmd" '/^# '"$name"' --/,/^#$/ s/^# //p'
-}
-
 if [ $# -eq 0 ]; then
-    show-embedded-help "$GEUL_BASE/geul"
+    usage "$GEUL_BINDIR/geul"
 else
     topic=$1; shift
-    helproot="$GEUL_BASE/help"
+    helproot="$GEUL_DOCDIR/help"
     doc="$helproot/$topic.txt"
     if [ -f "$doc" ]; then
         # show if help topic is available
@@ -34,7 +28,7 @@ else
         if cmd=`type -p geul-$topic 2>/dev/null`; then
             case "`file "$cmd"`" in
                 *text*)
-                show-embedded-help "$cmd"
+                usage "$cmd"
                 exit $?
                 ;;
             esac

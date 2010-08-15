@@ -51,7 +51,7 @@ case "$Command" in
     } | map "$IDX/meta.db" >/dev/null
     # update link index
     #  TODO remove more absolute URLs
-    xslt "$GEUL_BASE/index/extract-links.xsl" "$XHTML" 2>/dev/null |
+    xslt "$GEUL_DATADIR/index/extract-links.xsl" "$XHTML" 2>/dev/null |
     sed '\#^\([^:]*://\|\(mailto\|news\):\)# d' |
     links "$IDX/links.db" update "$id" >/dev/null
     ;;

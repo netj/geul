@@ -1,0 +1,7 @@
+#!/bin/sh
+
+{
+    for v in ${!GEUL_*}
+    do echo "@$v@=${!v}"
+    done
+} | customize .build geul

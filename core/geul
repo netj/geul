@@ -23,17 +23,25 @@
 #
 # Author: Jaeho Shin <netj@sparcs.org>
 # Created: 2009-03-17
-set -e
+set -eu
 
-# boot up and discover environment
+# setup environment
 Self=`readlink -f "$0"`
-GEUL_BASE=`dirname "$Self"`
-GEUL="$GEUL_BASE/core/"
-export GEUL_BASE GEUL
+Here=`dirname "$Self"`
+export GEUL_BASE=${Here%/bin}
+export GEUL_BINDIR="$GEUL_BASE/@GEUL_BINDIR@"
+export GEUL_LIBDIR="$GEUL_BASE/@GEUL_LIBDIR@"
+export GEUL_CMDDIR="$GEUL_BASE/@GEUL_CMDDIR@"
+export GEUL_DOCDIR="$GEUL_BASE/@GEUL_DOCDIR@"
+export GEUL_DATADIR="$GEUL_BASE/@GEUL_DATADIR@"
+export GEUL="$GEUL_CMDDIR/core/"
 
-for m in "$GEUL_BASE"/*/.module
-do PATH="${m%/.module}:$PATH"
+# setup PATH
+for m in "$GEUL_CMDDIR"/*/
+do PATH="${m%/}:$PATH"
 done
+
+[ $# -gt 0 ] || usage "$0" "No COMMAND given"
 
 Subcmd=$1; shift || true
 cmd=geul-$Subcmd
