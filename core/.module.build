@@ -1,7 +1,15 @@
 #!/bin/sh
 
+# geul
 {
     for v in ${!GEUL_*}
     do echo "@$v@=${!v}"
     done
 } | customize .build geul
+
+# ident for geul-version
+{
+    echo Geul $PACKAGEVERSION
+    echo Commit: `git rev-parse HEAD 2>/dev/null``git status >/dev/null && echo +WIP`
+    echo Modules: $MODULES
+} >.build/ident

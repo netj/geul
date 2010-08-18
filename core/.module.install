@@ -12,8 +12,9 @@ geul-log            $GEUL_CMDDIR/$MODULE_NAME/
 
 geul-path-parse     $GEUL_CMDDIR/$MODULE_NAME/
 
-geul-version        $GEUL_CMDDIR/$MODULE_NAME/
 geul-hack           $GEUL_CMDDIR/$MODULE_NAME/
+geul-version        $GEUL_CMDDIR/$MODULE_NAME/
+.build/ident        $GEUL_DATADIR/
 
 parse-meta          $GEUL_CMDDIR/$MODULE_NAME/
 run-extensions      $GEUL_CMDDIR/$MODULE_NAME/
