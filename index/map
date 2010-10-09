@@ -55,18 +55,18 @@ while (defined (my $l = <>)) {
             $valueToPut = undef;
         }
     }
-    if ($l =~ /^([^:]*)\s*:\s*(.*)$/) {
+    if ($l =~ /^([^:]*):\s*(.*)$/) {
         # put
         # KEY: VALUE
         $keyToPut = $prefix.$1;
         $valueToPut = $2;
         print $l . "\n";
-    } elsif ($l =~ /^\^\s*(.*)$/) {
+    } elsif ($l =~ /^\^(.*)$/) {
         # prefix
         # ^PREFIX
         $prefix = $1;
         print $l . "\n";
-    } elsif ($l =~ /^-\s*(.*)$/) {
+    } elsif ($l =~ /^-(.*)$/) {
         # remove
         # -KEY
         if ($1 ne "") {
