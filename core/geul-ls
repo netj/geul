@@ -44,6 +44,9 @@ if [ $# -eq 0 ]; then
 fi
 for Path; do
     p=`readlink -f "$Path" || echo "$Path"`
+    if [ -d "$p" ]; then
+        p+="/*"
+    fi
     case "$p" in
         "$GEUL_ROOT"/*)
         p=${p#$GEUL_ROOT}
