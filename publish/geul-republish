@@ -6,5 +6,7 @@ set -e
 . "$GEUL.sh"
 . "$GEUL.running-inside-a-repo"
 
-geul-clean "$@"
-geul-publish "$@"
+for i; do
+    geul-clean "$i"
+    geul-publish "$i"
+done
