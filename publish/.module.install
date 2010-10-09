@@ -25,5 +25,5 @@ date.xsl               $GEUL_DATADIR/$MODULE_NAME/
 id.xsl                 $GEUL_DATADIR/$MODULE_NAME/
 xsltsl                 $GEUL_DATADIR/$MODULE_NAME/
 
-chrome                 $GEUL_DATADIR/$MODULE_NAME/
+chrome/                $GEUL_DATADIR/$MODULE_NAME/
 htaccess               $GEUL_DATADIR/$MODULE_NAME/
