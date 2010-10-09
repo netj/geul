@@ -65,10 +65,10 @@
         </xsl:if>
         <!-- TODO use geul:title() instead -->
         <title><xsl:value-of select="normalize-space(//html:head/html:title)"/></title>
-        <link rel="stylesheet" type="text/css" href="chrome/geul.css"/>
-        <script type="text/javascript" src="chrome/jquery-1.4.2.min.js">;</script>
-        <script type="text/javascript" src="chrome/geul.js">;</script>
-        <script type="text/javascript" src="chrome/geul.datetime.js">;</script>
+        <link rel="stylesheet" type="text/css" href=".geul/geul.css"/>
+        <script type="text/javascript" src=".geul/jquery-1.4.2.min.js">;</script>
+        <script type="text/javascript" src=".geul/geul.js">;</script>
+        <script type="text/javascript" src=".geul/geul.datetime.js">;</script>
         <meta name="PermaLink" content="{$BaseURL}{$Id}"/>
     </xsl:template>
 

@@ -55,7 +55,7 @@ $(GEUL_STAGE)/%.xhtml: $(GEUL_STAGE)/%.xhtml-plain $(chromexsl) $(GEUL_STAGE)/%.
 	$(progress)
 	$(chrome)
 
-$(GEUL_STAGE)/chrome/%:: $(GEUL_DATADIR)/publish/chrome/%
+$(GEUL_STAGE)/.geul/%:: $(GEUL_DATADIR)/publish/chrome/%
 	$(progress)
 	mkdir -p $(@D)
 	install -m +r-wx $< $@

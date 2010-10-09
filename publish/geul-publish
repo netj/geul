@@ -19,7 +19,7 @@ done
 
 {
     echo .htaccess
-    (cd "$GEUL_DATADIR/publish" && find chrome -type f)
+    (cd "$GEUL_DATADIR/publish" && find chrome -type f | sed 's/^chrome/.geul/')
     for a in "${products[@]}"; do
         echo "$a"
     done
