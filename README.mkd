@@ -1,0 +1,25 @@
+Geul Publishing System
+======================
+
+Geul is a command-line publishing system for the world-wide web.  You write
+your articles in [Markdown][]-like syntax with your favorite editor, and
+organize them in your own directory or folder structure as cleanly as you want.
+You can use Geul commands to generate articles in HTML5 format and Atom feeds
+from those sources for publishing them on your web site.  You may define some
+series of transformation of XHTML pages with XSLT stylesheets to apply a
+different page layout for your web site.
+
+
+Requirements
+------------
+
+Geul requires following packages to run properly:
+
+ * GNU Coreutils
+ * SQLite 3
+ * xmllint from LibXML2
+ * xsltproc from LibXSLT
+
+
+[markdown]: http://en.wikipedia.org/wiki/Markdown
+
