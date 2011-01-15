@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+set -eu
+
+put() {
+    cat <<EOF
+^a/b/c 
+$1: $2
+EOF
+}
+
+get() {
+    cat <<EOF
+^a/b/c 
+$1
+EOF
+}
+
+rem() {
+    cat <<EOF
+^a/b/c 
+-$1
+EOF
+}
+
+remall() {
+    cat <<EOF
+^a/b/c 
+-
+EOF
+}
+
+equals() {
+    [ x"`tail -n 1 | sed 's/[^:]*://'`" = x"$1" ]
+}
+
+echo put1    ; put k1 v1 | ../../map a.db >/dev/null
+echo put2    ; put k2 v2 | ../../map a.db >/dev/null
+echo get1    ; get k1 | ../../map a.db | equals v1
+echo get1-1  ; get k1 | ../../map a.db | equals v1
+echo get2    ; get k2 | ../../map a.db | equals v2
+echo rem1    ; rem k1 | ../../map a.db >/dev/null
+echo remget1 ; get k1 | ../../map a.db | equals ""
+echo remget2 ; get k2 | ../../map a.db | equals v2
+echo remall  ; remall | ../../map a.db >/dev/null
+echo remall2 ; get k2 | ../../map a.db | equals ""
