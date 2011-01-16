@@ -28,18 +28,19 @@ fi
         modified=0
         date=""
         }
-        !rev && /^Revision / {
-            sub(/^Revision /, "Revision: ");
-            print $0;
-            rev=1;
+        /^Revision / {
+            rev++;
         }
         /^Date:/ {
-            date=$0;
-            if (!modified) {
-                sub(/^Date:/, "Modified:");
-                print $0;
-                modified=1;
-            }
+            date=$0
+        }
+        rev == 1 && /^$/ {
+            rev++;
+        }
+        rev == 1 {
+            sub(/^Revision /, "Revision: ");
+            sub(/^Date:/, "Modified:");
+            print;
         }
         END {
             sub(/^Date:/, "Created:", date);
