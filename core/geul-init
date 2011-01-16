@@ -21,7 +21,7 @@ GEUL_DIR="$GEUL_ROOT/.geul"
 # create a repository
 mkdir -p "$GEUL_DIR"
 cd "$GEUL_DIR"
-mkdir -p stage index
+mkdir -p stage index transform
 template="$GEUL_DATADIR/core/geul-init.d"
 for f in format base-url ignore
 do cp -f "$template/$f" .
