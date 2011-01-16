@@ -1,0 +1,107 @@
+#!/usr/bin/env python
+# preview-webserver -- a simple HTTP server for previewing articles
+#
+# Author: Jaeho Shin <netj@sparcs.org>
+# Created: 2011-01-17
+# This is a derived work from http://fragments.turtlemeat.com/pythonwebserver.php
+# Copyright Jon Berg , turtlemeat.com
+
+import sys,os
+import string,cgi,time
+from os import sep
+from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
+
+GEUL_ROOT = os.getenv("GEUL_ROOT")
+GEUL_STAGE = os.getenv("GEUL_STAGE")
+
+class NotModified(Exception):
+    def __init__(self):
+        return
+
+class PreviewHandler(BaseHTTPRequestHandler):
+
+    def etag_for(self, f):
+        s = os.stat(f)
+        return  '"' + str(s.st_ino) + "-" + str(s.st_mtime) + '"'
+
+    def check_conditional_request(self, p):
+        try:
+            etag = self.headers['If-None-Match']
+            if etag == self.etag_for(p):
+                raise NotModified()
+        except KeyError:
+            return
+
+    def headers_for_file(self, f):
+        self.send_header('ETag', self.etag_for(f))
+
+    def do_GET(self):
+        try:
+            # detect directories
+            if (not self.path.endswith('/')) and os.path.isdir(GEUL_ROOT + sep + self.path):
+                self.send_response(302)
+                self.send_header('Location', self.path + '/')
+                self.end_headers()
+                return
+
+            # use index
+            if self.path.endswith('/'):
+                self.path += 'index'
+                
+            g = GEUL_ROOT + sep + self.path + '.geul'
+            if os.path.exists(g):
+                # publish it first
+                os.system("geul-publish " + g)
+                h = GEUL_STAGE + sep + self.path + '.html'
+                self.check_conditional_request(h)
+                # send its headers
+                self.send_response(200)
+                self.send_header('Content-type', 'text/html')
+                self.headers_for_file(h)
+                self.end_headers()
+                # and its contents
+                f = open(h)
+                self.wfile.write(f.read())
+                f.close()
+                return
+            else:
+                for root in [GEUL_STAGE, GEUL_ROOT]:
+                    p = root + sep + self.path
+                    if os.path.exists(p):
+                        self.check_conditional_request(p)
+                        self.send_response(200)
+                        # TODO detect MIME type
+                        #self.send_header('Content-type', 'application/json; charset=utf-8')
+                        self.headers_for_file(p)
+                        self.end_headers()
+                        f = open(p)
+                        self.wfile.write(f.read())
+                        f.close()
+                        return
+            return
+        except IOError:
+            self.send_error(404, 'File Not Found: %s' % self.path)
+        except NotModified:
+            self.send_response(304)
+            self.end_headers()
+            self.wfile.write('Not Modified')
+     
+
+def main():
+    try:
+        # prepare server config
+        host = 'localhost'
+        if len(sys.argv) > 1:
+            port = int(sys.argv[1])
+        else:
+            port = 9301
+        # start server
+        server = HTTPServer((host, port), PreviewHandler)
+        print 'preview server started at http://%s:%d/' % (host, port)
+        server.serve_forever()
+    except KeyboardInterrupt:
+        print 'preview server stopped'
+        server.socket.close()
+
+if __name__ == '__main__':
+    main()

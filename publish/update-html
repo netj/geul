@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# geul2html -- how we transform geul articles into HTML5
+# update-html -- how we transform geul articles into HTML5
 # Usage: geul2html GEULFILE...
 # Author: Jaeho Shin <netj@sparcs.org>
 # Created: 2009-06-04

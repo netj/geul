@@ -47,8 +47,14 @@ skip-unchanged() {
 }
 geul-ls "$@" |
 skip-unchanged |
-xargs geul2html
+xargs update-html
 
-# TODO 3. htaccess
-# TODO 4. .geul/
+# 3. htaccess
+cd "$GEUL_ROOT"
+cat .htaccess "$GEUL_DATADIR"/publish/htaccess \
+    >"$GEUL_STAGE"/.htaccess 2>/dev/null || :
+
+# 4. .geul/
+cp -af "$GEUL_DATADIR"/publish/chrome/* "$GEUL_STAGE"/.geul/
+
 # TODO 5. remove stale files under $GEUL_STAGE/

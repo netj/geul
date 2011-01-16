@@ -60,8 +60,8 @@
 
 
     <xsl:template match="*" mode="meta">
-        <xsl:if test="$BaseURL">
-            <base href="{$BaseURL}"/>
+        <xsl:if test="$BaseURLPath">
+            <base href="{$BaseURLPath}"/>
         </xsl:if>
         <!-- TODO use geul:title() instead -->
         <title><xsl:value-of select="normalize-space(//html:head/html:title)"/></title>

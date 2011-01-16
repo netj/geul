@@ -1,0 +1,55 @@
+#!/usr/bin/env bash
+# geul-preview -- start previewing an article
+# Usage: geul preview ARTICLE
+#
+# Author: Jaeho Shin <netj@sparcs.org>
+# Created: 2011-01-16
+set -eu
+. "$GEUL.sh"
+. "$GEUL.running-inside-a-repo"
+
+Path=$1; shift
+id=`geul-path-parse "$Path"`
+id=${id%.geul}
+
+# TODO verbose option
+Verbose=false
+
+# TODO determine port
+port=54321
+
+# launch the preview URL
+{
+    sleep 1
+    open "http://localhost:$port/$id"
+} &
+
+$Verbose || exec &>/dev/null
+
+# start webserver
+preview-webserver $port
+
+## prepare apache config
+#tmp=`mktemp -d /tmp/geul-preview.XXXXXX`
+#trap "rm -rf $tmp" EXIT
+#
+#{
+#    grep ^LoadModule /etc/apache2/httpd.conf
+#    cat <<EOF
+#Listen localhost:$port
+#ErrorLog '| cat'
+##LogLevel debug
+#PidFile $tmp/httpd.pid
+#LockFile $tmp/httpd.lock
+#HostnameLookups off
+#DocumentRoot $GEUL_STAGE
+#RewriteEngine on
+#RewriteCond %{LA-U:REQUEST_FILENAME} !-F
+#RewriteRule ^/(.*) $GEUL_ROOT/\$1  [L,NS]
+#EOF
+#} >$tmp/httpd.conf
+#
+#geul-publish "$Path"
+#
+## launch Apache2 in foreground
+#httpd -f $tmp/httpd.conf -D FOREGROUND

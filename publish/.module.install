@@ -3,7 +3,7 @@ geul-clean             $GEUL_CMDDIR/$MODULE_NAME/
 
 save-output            $GEUL_CMDDIR/$MODULE_NAME/
 
-geul2html              $GEUL_CMDDIR/$MODULE_NAME/
+update-html            $GEUL_CMDDIR/$MODULE_NAME/
 article.xsl            $GEUL_DATADIR/$MODULE_NAME/
 xhtml2html5.xsl        $GEUL_DATADIR/$MODULE_NAME/
 
@@ -20,3 +20,7 @@ xsltsl                 $GEUL_DATADIR/$MODULE_NAME/
 
 chrome/                $GEUL_DATADIR/$MODULE_NAME/
 htaccess               $GEUL_DATADIR/$MODULE_NAME/
+
+
+geul-preview           $GEUL_CMDDIR/$MODULE_NAME/
+preview-webserver      $GEUL_CMDDIR/$MODULE_NAME/
