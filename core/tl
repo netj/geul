@@ -1,5 +1,5 @@
-#!/usr/bin/env bash
+#!/bin/sh
 # tl -- extract body from RFC 2822 format
 # Author: Jaeho Shin <netj@sparcs.org>
 # Created: 2009-06-10
-sed -n '/^$/,$ p' | tail -n +2
+exec sed '1,/^$/d'

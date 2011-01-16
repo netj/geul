@@ -3,27 +3,30 @@
 .sh                     $GEUL_CMDDIR/$MODULE_NAME/
 .running-inside-a-repo  $GEUL_CMDDIR/$MODULE_NAME/
 
-geul-init           $GEUL_CMDDIR/$MODULE_NAME/
-geul-init.d         $GEUL_DATADIR/$MODULE_NAME/
-
-geul-ls             $GEUL_CMDDIR/$MODULE_NAME/
-geul-rm             $GEUL_CMDDIR/$MODULE_NAME/
-geul-log            $GEUL_CMDDIR/$MODULE_NAME/
-
-geul-path-parse     $GEUL_CMDDIR/$MODULE_NAME/
-
 geul-hack           $GEUL_CMDDIR/$MODULE_NAME/
 geul-version        $GEUL_CMDDIR/$MODULE_NAME/
 .build/ident        $GEUL_DATADIR/
 
-parse-meta          $GEUL_CMDDIR/$MODULE_NAME/
-run-extensions      $GEUL_CMDDIR/$MODULE_NAME/
+geul-init           $GEUL_CMDDIR/$MODULE_NAME/
+geul-init.d         $GEUL_DATADIR/$MODULE_NAME/
 
-find-root           $GEUL_CMDDIR/$MODULE_NAME/
+geul-ls             $GEUL_CMDDIR/$MODULE_NAME/
+geul-log            $GEUL_CMDDIR/$MODULE_NAME/
+
+geul-info           $GEUL_CMDDIR/$MODULE_NAME/
+normalize-meta      $GEUL_CMDDIR/$MODULE_NAME/
+parse-meta          $GEUL_CMDDIR/$MODULE_NAME/
+
+geul-path-parse     $GEUL_CMDDIR/$MODULE_NAME/
+
 error               $GEUL_CMDDIR/$MODULE_NAME/
 message             $GEUL_CMDDIR/$MODULE_NAME/
+usage               $GEUL_CMDDIR/$MODULE_NAME/
+run-extensions      $GEUL_CMDDIR/$MODULE_NAME/
+find-root           $GEUL_CMDDIR/$MODULE_NAME/
+
 hd                  $GEUL_CMDDIR/$MODULE_NAME/
 tl                  $GEUL_CMDDIR/$MODULE_NAME/
 timestamp           $GEUL_CMDDIR/$MODULE_NAME/
+dnif                $GEUL_CMDDIR/$MODULE_NAME/
 xslt                $GEUL_CMDDIR/$MODULE_NAME/
-usage               $GEUL_CMDDIR/$MODULE_NAME/

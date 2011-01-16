@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+# dnif -- find with paths later
+# Usage: dnif FINDARG... -- PATH...
+#
+# Author: Jaeho Shin <netj@sparcs.org>
+# Created: 2011-01-16
+set -eu
+Query=()
+for a; do
+    case $a in
+        --)
+            break
+            ;;
+        *)
+            Query+=("$a")
+            ;;
+    esac
+done
+shift ${#Query[@]}
+shift
+exec find "$@" "${Query[@]}"

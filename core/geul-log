@@ -2,18 +2,20 @@
 # geul-log -- retreive revision history of a resource
 # Author: Jaeho Shin <netj@sparcs.org>
 # Created: 2009-03-15
-set -e
+set -eu
 . "$GEUL.sh"
 . "$GEUL.running-inside-a-repo"
 
 Path=$1; shift
 
 if ! [ -e "$Path" ]; then
-    error "$Path: No such resouce"
+    error "$Path: No such resource"
     exit 2
 fi
 
 relpath=`geul-path-parse "$Path"`
+
+# TODO indeed, this needs to be optimized for speed
 
 if git tag &>/dev/null; then
     # fetch history from Git
@@ -25,7 +27,7 @@ if git tag &>/dev/null; then
     {
         # revision to the working tree
         if [ $nrrevs -eq 0 -o \
-            `git diff --name-only HEAD -- "$GEUL_ROOT/$relpath" | wc -l` -gt 0 ]; then
+            -n "`git status --porcelain -- "$GEUL_ROOT/$relpath"`" ]; then
             echo Revision $(($nrrevs + 1))
             date -r "$GEUL_ROOT/$relpath" +"Date: %FT%T%:z"
             echo Status: draft

@@ -1,0 +1,47 @@
+#!/usr/bin/perl
+
+use utf8;
+use strict;
+
+our %CanonicalName;
+sub alias { my $n = shift; $CanonicalName{$_} = $n foreach @_; }
+alias(qw(Title 제목));
+alias(qw(Author 누가 글쓴이 지은이));
+alias(qw(Created 만듬 언제 날짜));
+alias(qw(Modified 고침));
+alias(qw(Status 상태));
+sub normalize_head {
+    my $hd = shift;
+    my $hd2 = {};
+    for my $n (keys %$hd) {
+        my $n2 = lc $n;
+        $n2 =~ s/\b./\U$&/g;
+        $n2 = $CanonicalName{$n} if exists $CanonicalName{$n};
+        $hd2->{$n2} = $hd->{$n};
+    }
+    $hd2
+}
+sub parse_head {
+    my $fh = shift;
+    my %hd;
+    my $last;
+    while (my $line = <$fh>) {
+        utf8::decode($line);
+        last if $line =~ /^\s*$/;
+        chomp $line;
+        if (defined $last and $line =~ /^\s+(.+)$/) {
+            $hd{$last} .= "\n\t" . $1;
+        } elsif ($line =~ /^([^:]+)\s*:\s*(.*)$/) {
+            $hd{$1} = $2;
+            $last = $1;
+        }
+    }
+    \%hd
+}
+
+my $hd = normalize_head(parse_head(\*STDIN));
+for my $n (keys %$hd) {
+    my $line = "$n: $hd->{$n}\n";
+    utf8::encode($line);
+    print $line;
+}

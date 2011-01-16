@@ -2,7 +2,7 @@
 # geul-publish -- publish articles
 # Author: Jaeho Shin <netj@sparcs.org>
 # Created: 2009-06-04
-set -e
+set -eu
 . "$GEUL.sh"
 . "$GEUL.running-inside-a-repo"
 
@@ -10,40 +10,45 @@ GEUL_BASEURL=`cat "$GEUL_DIR/base-url" 2>/dev/null`
 [ -n "$GEUL_BASEURL" ] || error ".geul/base-url: base URL is empty"
 export GEUL_BASEURL
 
-products=()
-for a; do
-    case "$a" in
-        *.*) products+=("$a") ;;
-    esac
-done
 
-{
-    echo .htaccess
-    (cd "$GEUL_DATADIR/publish" && find chrome -type f | sed 's/^chrome/.geul/')
-    for a in "${products[@]}"; do
-        echo "$a"
-    done
-    geul-ls -a "$@" | sed '
-        s/\.geul$/.xhtml/
-        s/\.xhtml$/.html/
-        '"${GEUL_PATH:+s#^#$GEUL_PATH/#}"'
-        '
-} |
-sed 's#^#'"$GEUL_STAGE"'/#' |
-xargs requires SHOW_PROGRESS=true
+# 0. synchronize index
+geul-index sync
 
+# 1. generate Atom and JSON feeds
+list-feed-ids() {
+    geul-ls -i "$@" |
+    geul-index meta Feed-Method |
+    grep -B1 Feed-Method:. |
+    sed -n 's/^\^\(.*\) $/\1/p'
+}
+only-outdated() {
+    cd "$GEUL_STAGE"
+    perl -ne '
+        chomp;
+        $i = $_;
+        $a = "$i.atom";
+        print "$i\n" unless
+            -e $a and (-M $a <= -M "'"$GEUL_DIR/index/update.timestamp"'");
+    '
+}
+list-feed-ids "$@" |
+only-outdated |
+xargs -L1 update-feed
 
-# clean up index
-cd "$GEUL_ROOT"
-tmp=`mktemp -d /tmp/geul-publish.XXXXXX`
-trap "rm -rf $tmp" EXIT
-geul-index ls | sort >$tmp/index-items
-geul-ls -i | sort | diff $tmp/index-items - |
-sed -n '/^< / { s/^< //; /^$/d; p }' >$tmp/stale-items
-if [ -s $tmp/stale-items ]; then
-    xargs <$tmp/stale-items  geul-index rm
-    # TODO maybe we can limit the regenerations to indexes that touch the stale-items
-    geul-update-feeds
-    geul-publish
-fi
-# TODO what if new items were added? should we always update the feeds whenever our index changes?
+# 2. transform Geul articles into HTML
+skip-unchanged() {
+    perl -ne '
+        chomp;
+        $g = $_;
+        $h = "'"$GEUL_STAGE/$GEUL_PATH"'/$g";
+        $h =~ s/\.geul$/.html/;
+        print "$g\n" unless -e $h and (-M $h <= -M $g)
+    '
+}
+geul-ls "$@" |
+skip-unchanged |
+xargs geul2html
+
+# TODO 3. htaccess
+# TODO 4. .geul/
+# TODO 5. remove stale files under $GEUL_STAGE/

@@ -1,0 +1,117 @@
+#!/usr/bin/env bash
+# geul2html -- how we transform geul articles into HTML5
+# Usage: geul2html GEULFILE...
+# Author: Jaeho Shin <netj@sparcs.org>
+# Created: 2009-06-04
+set -eu
+. "$GEUL.sh"
+. "$GEUL.running-inside-a-repo"
+
+ARTICLE_XSLT="$GEUL_DATADIR"/publish/article.xsl
+XHTML2HTML5_XSLT="$GEUL_DATADIR"/publish/xhtml2html5.xsl
+
+transform() {
+    local xsl=$1; shift
+    if [ -e "$xsl" ]; then
+        transform1() {
+            xslt "$xsl" "-" \
+                --path="$GEUL_STAGE/$dir:$GEUL_ROOT/$dir" \
+                Id="$id" BaseURL=$GEUL_BASEURL
+        }
+        if [ $# -gt 0 ]; then
+            transform1 | transform "$@"
+        else
+            transform1
+        fi
+    else
+        transform "$@"
+    fi
+}
+
+save-as-html5() {
+    save-output "$1" xslt "$XHTML2HTML5_XSLT" "-" \
+        --path="$GEUL_STAGE/$dir:$GEUL_ROOT/$dir"
+}
+
+
+log=`mktemp /tmp/geul2html.log.XXXXXX`
+trap "rm -f $log" EXIT
+
+for Path; do
+    echo $Path
+    geul-log "$Path" >$log
+    id=`geul-path-parse "$Path"`
+    id=${id%.geul}
+    dir=`dirname "$id"`
+    {
+        echo '<html xmlns="http://www.w3.org/1999/xhtml">'
+        echo '<head xmlns:geul="http://netj.org/2009/geul">'
+        # include metadata
+        {
+            echo "Generated: `timestamp`"
+            _GEUL_LOG=$log geul-info "$Path"
+        } |
+        perl -Mstrict -Mutf8 -e '
+            sub escapeXML {
+                # handle XML tokens
+                my $text = shift;
+                $text =~ s#&#&amp;#gs;
+                $text =~ s#<#&lt;#gs;
+                $text =~ s#>#&gt;#gs;
+                utf8::decode($text);
+                $text
+            }
+            sub p {
+                my $s = shift;
+                utf8::encode($s);
+                print $s;
+            }
+            my $hd = {};
+            my $last;
+            while (my $line = <>) {
+                utf8::decode($line);
+                last if $line =~ /^\s*$/;
+                chomp $line;
+                if (defined $last and $line =~ /^\s+(.+)$/) {
+                    $hd->{$last} .= "\n" . $1;
+                } elsif ($line =~ /^([^:]+)\s*:\s*(.*)$/) {
+                    $hd->{$1} = $2;
+                    $last = $1;
+                }
+            }
+            p(sprintf "<title>%s</title>\n", escapeXML($hd->{Title})); delete $hd->{Title};
+            # TODO make use of dc:date and etc.
+            for my $n (keys %$hd) { #(qw(Author Created Modified Generated Status Revision)) {
+                next unless defined $hd->{$n};
+                p(sprintf "<meta name=\"%s\" content=\"%s\"/>\n",
+                    escapeXML($n), escapeXML($hd->{$n}));
+            }
+        '
+        # include revision history
+        <$log \
+        awk '
+            BEGIN {
+                msg=0
+                r=0
+            }
+            r && /^Revision / { msg=0; print "</geul:revision>" }
+            /^Revision / { r=$2; print "<geul:revision number=\"" r "\"" }
+            r && msg { gsub(/&/, "\\&amp;"); gsub(/</, "\\&lt;"); print }
+            r && !msg && /^Date: / { print " date=\"" $2 "\"" }
+            r && !msg && /^$/ { msg=1; printf ">" }
+            END {
+            if (r) { print "</geul:revision>" }
+            }
+        '
+        echo '</head>'
+        echo '<body>'
+        tl <"$Path" | Markdown.pl
+        echo '</body>'
+        echo '</html>'
+    } |
+    transform \
+        "$ARTICLE_XSLT" \
+        "$GEUL_DIR"/transform/*.xsl \
+        |
+    save-as-html5 "$GEUL_STAGE/$id.html"
+done

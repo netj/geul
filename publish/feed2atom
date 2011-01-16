@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 # feed2atom -- generate an ATOM feed
+# Usage: feed2atom ID
+#
 # Author: Jaeho Shin <netj@sparcs.org>
 # Created: 2009-06-12
 set -e
@@ -7,7 +9,18 @@ set -e
 . "$GEUL.running-inside-a-repo"
 
 Id=$1; shift
-Meta=$1; shift
+path="$Id".geul
+
+cd "$GEUL_ROOT"
+
+# metadata
+meta=${_GEUL_META:-}
+if ! [ -e "$meta" ]; then
+    meta=`mktemp /tmp/feed2atom.meta.XXXXXX`
+    trap "rm -f $meta" EXIT
+    geul-info "$path" >$meta
+    export _GEUL_META=$meta
+fi
 
 while read n v; do
     case "$n" in
@@ -16,7 +29,7 @@ while read n v; do
         Feed-Size:)   feedsize=$v ;;
         "") break ;;
     esac
-done <"$Meta"
+done <"$meta"
 
 # fallback
 if [ -z "$feedmethod" -o x"$feedmethod" = x"links" ]; then
@@ -44,4 +57,4 @@ if [ -n "$feedsize" ]
 then head -n $feedsize
 else cat
 fi |
-ls2atom "$Id" "$Meta"
+ls2atom "$Id"

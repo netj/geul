@@ -2,7 +2,7 @@
 # geul-clean -- remove generated resources while publishing articles
 # Author: Jaeho Shin <netj@sparcs.org>
 # Created: 2009-06-06
-set -e
+set -eu
 . "$GEUL.sh"
 . "$GEUL.running-inside-a-repo"
 
@@ -10,7 +10,7 @@ set -e
 geul-ls -as "$@" | (cd "$GEUL_STAGE/$GEUL_PATH"; xargs rm -vf)
 
 # remove empty-containing directories
-geul-ls -a "$@" |
+geul-ls "$@" |
 sed '
 s#/[^/]*$##
 s#^[^/]*$#.#
@@ -20,6 +20,6 @@ sort -u |
 {
     cd "$GEUL_STAGE"
     while read -r d; do
-        rmdir -vp "$d" 2>/dev/null || true
+        rmdir -p "$d" 2>/dev/null || true
     done
 }

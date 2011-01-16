@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+# geul-info -- retreive metadata of an article
+# Author: Jaeho Shin <netj@sparcs.org>
+# Created: 2011-01-15
+set -eu
+. "$GEUL.sh"
+. "$GEUL.running-inside-a-repo"
+
+Path=$1; shift
+
+id=`geul-path-parse "$Path"`
+id=${id%.geul}
+
+# prepare log
+log=${_GEUL_LOG:-}
+if ! [ -e "$log" ]; then
+    log=`mktemp /tmp/geul-info.log.XXXXXX`
+    trap 'rm -f "$log"' EXIT
+    geul-log "$Path" >"$log"
+fi
+
+# TODO indeed, this needs to be optimized for speed
+{
+    echo "Id: $id"
+    awk <"$log" '
+        BEGIN {
+        rev=0
+        modified=0
+        date=""
+        }
+        !rev && /^Revision / {
+            sub(/^Revision /, "Revision: ");
+            print $0;
+            rev=1;
+        }
+        /^Date:/ {
+            date=$0;
+            if (!modified) {
+                sub(/^Date:/, "Modified:");
+                print $0;
+                modified=1;
+            }
+        }
+        END {
+            sub(/^Date:/, "Created:", date);
+            print date;
+        }
+        '
+    hd <"$Path"
+} |
+normalize-meta

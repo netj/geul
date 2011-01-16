@@ -7,7 +7,7 @@ set -e
 . "$GEUL.sh"
 
 Id=$1; shift
-Meta=$1; shift
+Meta=${_GEUL_LOG:-}
 
 GEUL_BASEURL=`cat "$GEUL_DIR/base-url"`
 
@@ -22,6 +22,7 @@ xml-escape() {
 
 echo '<?xml version="1.0" encoding="utf-8"?>'
 echo '<feed xmlns="http://www.w3.org/2005/Atom">'
+
 (
 eval "`
 geul-index meta Title Summary <<<"$Id" | tail -n +2 |

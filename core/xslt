@@ -8,6 +8,7 @@ xsl=$1; shift
 src=$1; shift
 
 # TODO use saxon for supporting xslt 2.0
+# TODO URIResolver for --path=*
 #params=()
 #for p; do
 #    params+=("?$p")
@@ -20,6 +21,9 @@ for p; do
         "?"*)
         p=${p#\?}
         params+=(--param "${p%%=*}" "${p#*=}")
+        ;;
+        --path=*)
+        params+=(--path "${p#--path=}")
         ;;
         *)
         params+=(--stringparam "${p%%=*}" "${p#*=}")

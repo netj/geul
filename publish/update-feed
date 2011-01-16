@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+# update-feed -- update a single feed
+# Author: Jaeho Shin <netj@sparcs.org>
+# Created: 2011-01-16
+set -eu
+. "$GEUL.sh"
+. "$GEUL.running-inside-a-repo"
+
+ATOM2JSON_XSLT="$GEUL_DATADIR"/publish/atom2json.xsl
+
+Id=$1; shift
+
+path=${Id#$GEUL_PATH/}
+echo $path.atom
+
+
+cd "$GEUL_STAGE"
+
+# publish ATOM feed
+save-output "$Id".atom  feed2atom "$Id"
+
+# also provide JSON form
+save-output "$Id".json  xslt "$ATOM2JSON_XSLT" "$Id".atom

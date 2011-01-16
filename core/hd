@@ -1,5 +1,5 @@
-#!/usr/bin/env bash
+#!/bin/sh
 # hd -- extract head from RFC 2822 format
 # Author: Jaeho Shin <netj@sparcs.org>
 # Created: 2009-06-10
-exec sed -n '1,/^$/ { /^$/d; p; }'
+exec sed -n '/^$/q;p'

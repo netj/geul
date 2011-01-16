@@ -1,6 +1,5 @@
 geul-index          $GEUL_CMDDIR/$MODULE_NAME/
 
-before-geul-rm      $GEUL_CMDDIR/$MODULE_NAME/
 filter-meta         $GEUL_CMDDIR/$MODULE_NAME/
 links               $GEUL_CMDDIR/$MODULE_NAME/
 map                 $GEUL_CMDDIR/$MODULE_NAME/

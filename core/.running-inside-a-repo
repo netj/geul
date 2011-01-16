@@ -3,7 +3,8 @@
 # Author: Jaeho Shin <netj@sparcs.org>
 # Created: 2009-07-09
 
-[ -n "$GEUL_ROOT" ] || GEUL_ROOT=`find-root`
+: ${GEUL_ROOT:=`find-root`}
+
 # assume repository is on the root of the stage directory
 GEUL_DIR="$GEUL_ROOT/.geul"
 GEUL_STAGE="$GEUL_DIR/stage"

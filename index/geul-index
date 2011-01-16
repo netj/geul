@@ -3,7 +3,7 @@
 #
 # Author: Jaeho Shin <netj@sparcs.org>
 # Created: 2009-09-04
-set -e
+set -eu
 . "$GEUL.sh"
 . "$GEUL.running-inside-a-repo"
 
@@ -26,12 +26,27 @@ case "$Command" in
     "
     ;;
 
-    add)
-    Meta=$1; shift
-    Summary=$1; shift
-    XHTML=$1; shift
+    sync)
+        cd "$GEUL_ROOT"
+        tmp=`mktemp -d /tmp/geul-index.XXXXXX`
+        trap "rm -rf $tmp" EXIT
+        geul-index ls | sort >$tmp/index-items
+        # add updated items
+        geul-ls |
+        xargs dnif -newer "$IDX"/update.timestamp -- |
+        xargs -L1 geul-index update
+        # clean stale items
+        geul-ls -i | sort | diff $tmp/index-items - |
+        sed -n '/^< / { s/^< //; /^$/d; p }' >$tmp/stale-items
+        ! [ -s $tmp/stale-items ] || xargs <$tmp/stale-items  geul-index rm
+        ;;
+
+    update)
+    Path=$1; shift
+    metadata=`mktemp /tmp/geul-index.meta.XXXXXX`
+    trap "rm -rf $metadata" EXIT
     # add/update list
-    eval "`parse-meta id title created <"$Meta"`"
+    eval "`parse-meta id title created <$metadata`"
     id=${id//\'/\'\'}
     title=${title//\'/\'\'}
     created=${created//\'/\'\'}
@@ -46,14 +61,21 @@ case "$Command" in
     {
         echo "^$id " # XXX watch out for the trailing space!
         echo - # clear all metadata
-        cat "$Meta" # feed metadata
-        echo -n "Summary:"; sed 's/^/ /' <"$Summary" # and summary
+        cat $metadata # feed metadata
+        echo -n "Summary:"; text2summary "$Path" | sed 's/^/ /' # and summary
     } | map "$IDX/meta.db" >/dev/null
     # update link index
     #  TODO remove more absolute URLs
-    xslt "$GEUL_DATADIR/index/extract-links.xsl" "$XHTML" 2>/dev/null |
+    {
+        echo '<body>'
+        tl <"$Path" | Markdown.pl
+        echo '</body>'
+    } |
+    xslt "$GEUL_DATADIR/index/extract-links.xsl" "-" 2>/dev/null |
     sed '\#^\([^:]*://\|\(mailto\|news\):\)# d' |
     links "$IDX/links.db" update "$id" >/dev/null
+    # update timestamp
+    touch "$IDX"/update.timestamp
     ;;
 
     rm)

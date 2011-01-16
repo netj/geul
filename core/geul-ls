@@ -111,7 +111,7 @@ polish() {
     local cmd
     cmd=(remove_redundancies)
     cmd+=(\| make_relative_to_root)
-    [ -z "$GEUL_PATH" ] || cmd+=(\| make_relative_to_pwd)
+    $ListId || [ -z "$GEUL_PATH" ] || cmd+=(\| make_relative_to_pwd)
     if [ -t 1 ]; then
         cmd+=(\| column)
     fi

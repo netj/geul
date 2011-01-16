@@ -40,10 +40,11 @@
     <xsl:template name="json-field">
         <xsl:param name="name"/>
         <xsl:param name="value"/>
+        <xsl:text>"</xsl:text>
         <xsl:value-of select="$name"/>
-        <xsl:text>: '</xsl:text>
-        <xsl:value-of select="str:replace($value, &quot;'&quot;, &quot;\'&quot;)"/>
-        <xsl:text>'</xsl:text>
+        <xsl:text>": "</xsl:text>
+        <xsl:value-of select="str:replace($value, '&quot;', '\&quot;')"/>
+        <xsl:text>"</xsl:text>
     </xsl:template>
 
 </xsl:stylesheet>

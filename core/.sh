@@ -3,4 +3,4 @@
 # Created: 2009-07-09
 
 # for debugging
-[ -z "$DEBUG" ] || set -x
+[ -z "${DEBUG:-}" ] || set -x
