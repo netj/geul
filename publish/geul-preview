@@ -12,8 +12,8 @@ Path=$1; shift
 id=`geul-path-parse "$Path"`
 id=${id%.geul}
 
-# TODO verbose option
-Verbose=false
+export GEUL_BASEURL=`geul-config get base-url`
+export GEUL_BASEURLPATH=${GEUL_BASEURL#*://*/}
 
 # TODO determine port
 port=54321
@@ -21,10 +21,11 @@ port=54321
 # launch the preview URL
 {
     sleep 1
-    open "http://localhost:$port/$id"
+    # FIXME this is for Mac only
+    open "http://localhost:$port/$GEUL_BASEURLPATH${id%index}"
 } &
 
-$Verbose || exec &>/dev/null
+$GEUL_DEBUG || exec &>/dev/null
 
 # start webserver
 preview-webserver $port

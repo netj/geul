@@ -11,8 +11,10 @@ import string,cgi,time
 from os import sep
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 
+GEUL_DATADIR = os.getenv("GEUL_DATADIR")
 GEUL_ROOT = os.getenv("GEUL_ROOT")
 GEUL_STAGE = os.getenv("GEUL_STAGE")
+GEUL_BASEURLPATH = '/' + os.getenv("GEUL_BASEURLPATH")
 
 class NotModified(Exception):
     def __init__(self):
@@ -35,52 +37,67 @@ class PreviewHandler(BaseHTTPRequestHandler):
     def headers_for_file(self, f):
         self.send_header('ETag', self.etag_for(f))
 
+    def serve_file(self, p):
+        self.check_conditional_request(p)
+        # send its headers
+        self.send_response(200)
+        # TODO detect MIME type
+        #self.send_header('Content-type', 'application/json; charset=utf-8')
+        self.headers_for_file(p)
+        self.end_headers()
+        # and its contents
+        f = open(p)
+        self.wfile.write(f.read())
+        f.close()
+        return
+
     def do_GET(self):
         try:
+            relpath = self.path
+            if relpath.startswith(GEUL_BASEURLPATH):
+                relpath = relpath.replace(GEUL_BASEURLPATH, "/", 1)
+            else:
+                return
+
             # detect directories
-            if (not self.path.endswith('/')) and os.path.isdir(GEUL_ROOT + sep + self.path):
+            if (not relpath.endswith('/')) and os.path.isdir(GEUL_ROOT + sep + relpath):
                 self.send_response(302)
                 self.send_header('Location', self.path + '/')
                 self.end_headers()
                 return
 
             # use index
-            if self.path.endswith('/'):
-                self.path += 'index'
+            if relpath.endswith('/'):
+                relpath += 'index'
                 
-            g = GEUL_ROOT + sep + self.path + '.geul'
-            if os.path.exists(g):
+            g = GEUL_ROOT + sep + relpath + '.geul'
+            if relpath.startswith('/.geul/'):
+                # map /.geul/
+                p = relpath.replace('/.geul/', GEUL_DATADIR + '/publish/chrome/')
+                return self.serve_file(p)
+            elif os.path.exists(g):
                 # publish it first
                 os.system("geul-publish " + g)
-                h = GEUL_STAGE + sep + self.path + '.html'
+                # send it
+                h = GEUL_STAGE + sep + relpath + '.html'
                 self.check_conditional_request(h)
-                # send its headers
                 self.send_response(200)
                 self.send_header('Content-type', 'text/html')
                 self.headers_for_file(h)
                 self.end_headers()
-                # and its contents
                 f = open(h)
                 self.wfile.write(f.read())
                 f.close()
                 return
             else:
                 for root in [GEUL_STAGE, GEUL_ROOT]:
-                    p = root + sep + self.path
+                    p = root + sep + relpath
                     if os.path.exists(p):
-                        self.check_conditional_request(p)
-                        self.send_response(200)
-                        # TODO detect MIME type
-                        #self.send_header('Content-type', 'application/json; charset=utf-8')
-                        self.headers_for_file(p)
-                        self.end_headers()
-                        f = open(p)
-                        self.wfile.write(f.read())
-                        f.close()
-                        return
+                        return self.serve_file(p)
             return
         except IOError:
             self.send_error(404, 'File Not Found: %s' % self.path)
+            self.wfile.write("")
         except NotModified:
             self.send_response(304)
             self.end_headers()

@@ -10,6 +10,7 @@ geul-version        $GEUL_CMDDIR/$MODULE_NAME/
 geul-init           $GEUL_CMDDIR/$MODULE_NAME/
 geul-init.d         $GEUL_DATADIR/$MODULE_NAME/
 
+geul-config         $GEUL_CMDDIR/$MODULE_NAME/
 geul-ls             $GEUL_CMDDIR/$MODULE_NAME/
 geul-log            $GEUL_CMDDIR/$MODULE_NAME/
 

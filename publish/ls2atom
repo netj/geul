@@ -9,7 +9,7 @@ set -e
 Id=$1; shift
 Meta=${_GEUL_LOG:-}
 
-GEUL_BASEURL=`cat "$GEUL_DIR/base-url"`
+export GEUL_BASEURL=`geul-config get base-url`
 
 xml-escape() {
     x=$1

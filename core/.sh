@@ -3,4 +3,5 @@
 # Created: 2009-07-09
 
 # for debugging
-[ -z "${DEBUG:-}" ] || set -x
+: ${GEUL_DEBUG:=false}
+! $GEUL_DEBUG || set -x
